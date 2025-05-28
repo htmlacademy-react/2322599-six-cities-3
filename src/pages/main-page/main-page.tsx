@@ -1,4 +1,5 @@
 import OfferCard from '../../components/offer-card/offer-card';
+import { mockOffers } from '../../mocks/offers';
 
 type MainPageProps = {
   offersCount: number;
@@ -6,59 +7,6 @@ type MainPageProps = {
 }
 
 function MainPage({ offersCount, city }: MainPageProps): JSX.Element {
-  const offers = [
-    {
-      id: 1,
-      isPremium: true,
-      imageSrc: 'img/apartment-01.jpg',
-      price: 120,
-      isFavorite: false,
-      rating: 4,
-      title: 'Beautiful & luxurious apartment at great location',
-      type: 'Apartment'
-    },
-    {
-      id: 2,
-      isPremium: false,
-      imageSrc: 'img/room.jpg',
-      price: 80,
-      isFavorite: true,
-      rating: 4,
-      title: 'Wood and stone place',
-      type: 'Room'
-    },
-    {
-      id: 3,
-      isPremium: false,
-      imageSrc: 'img/apartment-02.jpg',
-      price: 132,
-      isFavorite: false,
-      rating: 4,
-      title: 'Canal View Prinsengracht',
-      type: 'Apartment'
-    },
-    {
-      id: 4,
-      isPremium: true,
-      imageSrc: 'img/apartment-03.jpg',
-      price: 180,
-      isFavorite: false,
-      rating: 5,
-      title: 'Nice, cozy, warm big bed apartment',
-      type: 'Apartment'
-    },
-    {
-      id: 5,
-      isPremium: false,
-      imageSrc: 'img/room.jpg',
-      price: 80,
-      isFavorite: true,
-      rating: 4,
-      title: 'Wood and stone place',
-      type: 'Room'
-    }
-  ];
-
   return (
     <div className="page page--gray page--main">
       <header className="header">
@@ -148,11 +96,11 @@ function MainPage({ offersCount, city }: MainPageProps): JSX.Element {
                 </ul>
               </form>
               <div className="cities__places-list places__list tabs__content">
-                {offers.map((offer) => (
+                {mockOffers.map((offer) => (
                   <OfferCard
                     key={offer.id}
                     isPremium={offer.isPremium}
-                    imageSrc={offer.imageSrc}
+                    imageSrc={offer.previewImage}
                     price={offer.price}
                     isFavorite={offer.isFavorite}
                     rating={offer.rating}
