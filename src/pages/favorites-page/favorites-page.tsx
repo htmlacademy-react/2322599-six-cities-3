@@ -1,9 +1,13 @@
 import Logo from '../../components/logo/logo';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 function FavoritesPage(): JSX.Element {
   return (
     <div className="page">
+      <Helmet>
+        <title>6 cities. Saved listings</title>
+      </Helmet>
       <header className="header">
         <div className="container">
           <div className="header__wrapper">

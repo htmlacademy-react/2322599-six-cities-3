@@ -1,7 +1,11 @@
-// not-found-page.tsx
+import { Helmet } from 'react-helmet-async';
+
 function NotFoundPage(): JSX.Element {
   return (
     <div className="page page--gray page--not-found">
+      <Helmet>
+        <title>6 cities. Page not found</title>
+      </Helmet>
       <header className="header">
         <div className="container">
           <div className="header__wrapper">
