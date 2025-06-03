@@ -18,9 +18,8 @@ function App({ settings }: AppProps): JSX.Element {
     <HelmetProvider>
       <BrowserRouter>
         <Routes>
-          <Route path={AppRoute.Root} element={<Layout />}>
-            <Route index element={<MainPage offersCount={settings.OffersCount} city={settings.City} />} />
-            <Route path={AppRoute.Login} element={<LoginPage />} />
+          <Route element={<Layout authorizationStatus={AuthorizationStatus.Auth} />}>
+            <Route path={AppRoute.Root} element={<MainPage offersCount={settings.OffersCount} city={settings.City} />} />
             <Route
               path={AppRoute.Favorites}
               element={
@@ -30,8 +29,11 @@ function App({ settings }: AppProps): JSX.Element {
               }
             />
             <Route path={AppRoute.Offer} element={<OfferPage />} />
-            <Route path="*" element={<NotFoundPage />} />
           </Route>
+
+          <Route path={AppRoute.Login} element={<LoginPage />} />
+
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
     </HelmetProvider>
