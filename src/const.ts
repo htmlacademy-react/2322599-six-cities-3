@@ -1,6 +1,7 @@
 export const Settings = {
   OffersCount: 312,
-  City: 'Amsterdam'
+  City: 'Amsterdam',
+  Cities: ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'] as const,
 } as const;
 
 export enum AppRoute {
