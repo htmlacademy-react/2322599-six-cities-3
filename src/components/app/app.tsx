@@ -8,8 +8,8 @@ import OfferPage from '../../pages/offer-page/offer-page';
 import NotFoundPage from '../../pages/not-found-page/not-found-page';
 import PrivateRoute from '../private-route/private-route';
 import Layout from '../layout/layout';
-import { Offer } from '../../mocks/offers';
-import { Review } from '../../mocks/reviews';
+import { Offer } from '../../types/offers';
+import { Review } from '../../types/reviews';
 
 type AppProps = {
   settings: typeof Settings;

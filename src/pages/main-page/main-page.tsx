@@ -1,6 +1,6 @@
 import OfferCard from '../../components/offer-card/offer-card';
 import { Helmet } from 'react-helmet-async';
-import { Offer } from '../../mocks/offers';
+import { Offer } from '../../types/offers';
 import { Settings } from '../../const';
 
 type MainPageProps = {

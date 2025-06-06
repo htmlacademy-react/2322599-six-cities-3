@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Offer } from '../../mocks/offers';
-import { Review } from '../../mocks/reviews';
+import { Offer } from '../../types/offers';
+import { Review } from '../../types/reviews';
 
 type OfferPageProps = {
   offers: Offer[];
