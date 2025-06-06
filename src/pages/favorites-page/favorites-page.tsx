@@ -1,9 +1,13 @@
 import OfferCard from '../../components/offer-card/offer-card';
-import { mockOffers } from '../../mocks/offers';
 import { Helmet } from 'react-helmet-async';
+import { Offer } from '../../mocks/offers';
 
-function FavoritesPage(): JSX.Element {
-  const favoriteOffers = mockOffers.filter((offer) => offer.isFavorite);
+type FavoritesPageProps = {
+  offers: Offer[];
+}
+
+function FavoritesPage({ offers }: FavoritesPageProps): JSX.Element {
+  const favoriteOffers = offers.filter((offer) => offer.isFavorite);
 
   return (
     <>

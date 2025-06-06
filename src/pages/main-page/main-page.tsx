@@ -1,14 +1,15 @@
 import OfferCard from '../../components/offer-card/offer-card';
-import { mockOffers } from '../../mocks/offers';
 import { Helmet } from 'react-helmet-async';
+import { Offer } from '../../mocks/offers';
 import { Settings } from '../../const';
 
 type MainPageProps = {
   offersCount: number;
   city: string;
+  offers: Offer[];
 }
 
-function MainPage({ offersCount, city }: MainPageProps): JSX.Element {
+function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
   return (
     <>
       <Helmet>
@@ -51,7 +52,7 @@ function MainPage({ offersCount, city }: MainPageProps): JSX.Element {
                 </ul>
               </form>
               <div className="cities__places-list places__list tabs__content">
-                {mockOffers.map((offer) => (
+                {offers.map((offer) => (
                   <OfferCard
                     key={offer.id}
                     isPremium={offer.isPremium}
