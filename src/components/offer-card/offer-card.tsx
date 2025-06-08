@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 type OfferCardProps = {
   isPremium: boolean;
   imageSrc: string;
@@ -12,11 +14,17 @@ function OfferCard({
   isPremium,
   imageSrc,
   price,
-  isFavorite,
+  isFavorite: initialIsFavorite,
   rating,
   title,
   type
 }: OfferCardProps): JSX.Element {
+  const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
+
+  const handleFavoriteClick = () => {
+    setIsFavorite(!isFavorite);
+  };
+
   return (
     <article className="cities__card place-card">
       {isPremium && (
@@ -38,6 +46,7 @@ function OfferCard({
           <button
             className={`place-card__bookmark-button button ${isFavorite ? 'place-card__bookmark-button--active' : ''}`}
             type="button"
+            onClick={handleFavoriteClick}
           >
             <svg className="place-card__bookmark-icon" width="18" height="19">
               <use xlinkHref="#icon-bookmark"></use>
