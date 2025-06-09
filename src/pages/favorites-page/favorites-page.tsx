@@ -4,9 +4,13 @@ import { Offer } from '../../types/offers';
 
 type FavoritesPageProps = {
   offers: Offer[];
-}
+};
 
 function FavoritesPage({ offers }: FavoritesPageProps): JSX.Element {
+  const handleFavoriteToggle = () => {
+    // Обработка изменения статуса "Избранное"
+  };
+
   const favoriteOffers = offers.filter((offer) => offer.isFavorite);
 
   return (
@@ -48,6 +52,8 @@ function FavoritesPage({ offers }: FavoritesPageProps): JSX.Element {
                         rating={offer.rating}
                         title={offer.title}
                         type={offer.type}
+                        id={offer.id}
+                        onFavoriteToggle={handleFavoriteToggle}
                       />
                     ))}
                   </div>

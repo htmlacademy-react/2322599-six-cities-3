@@ -31,3 +31,8 @@ export type Offer = {
   images: string[];
   maxAdults: number;
 };
+
+export type FavoriteData = {
+  offerId: string;
+  status: boolean;
+};

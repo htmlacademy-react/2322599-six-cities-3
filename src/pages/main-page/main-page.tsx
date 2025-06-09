@@ -7,9 +7,13 @@ type MainPageProps = {
   offersCount: number;
   city: string;
   offers: Offer[];
-}
+};
 
 function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
+  const handleFavoriteToggle = () => {
+    // Обработка изменения статуса "Избранное"
+  };
+
   return (
     <>
       <Helmet>
@@ -62,6 +66,8 @@ function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
                     rating={offer.rating}
                     title={offer.title}
                     type={offer.type}
+                    id={offer.id}
+                    onFavoriteToggle={handleFavoriteToggle}
                   />
                 ))}
               </div>

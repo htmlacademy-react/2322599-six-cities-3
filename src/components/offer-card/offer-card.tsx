@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FavoriteData } from '../../types/offers';
 
 type OfferCardProps = {
   isPremium: boolean;
@@ -8,6 +9,8 @@ type OfferCardProps = {
   rating: number;
   title: string;
   type: string;
+  id: string;
+  onFavoriteToggle?: (data: FavoriteData) => void;
 };
 
 function OfferCard({
@@ -17,12 +20,20 @@ function OfferCard({
   isFavorite: initialIsFavorite,
   rating,
   title,
-  type
+  type,
+  id,
+  onFavoriteToggle
 }: OfferCardProps): JSX.Element {
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
 
   const handleFavoriteClick = () => {
-    setIsFavorite(!isFavorite);
+    const newStatus = !isFavorite;
+    setIsFavorite(newStatus);
+
+    onFavoriteToggle?.({
+      offerId: id,
+      status: newStatus
+    });
   };
 
   return (
