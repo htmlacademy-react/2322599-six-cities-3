@@ -45,14 +45,14 @@ function FavoritesPage({ offers }: FavoritesPageProps): JSX.Element {
                     {favoriteOffers.map((offer) => (
                       <OfferCard
                         key={offer.id}
-                        isPremium={offer.isPremium}
-                        imageSrc={offer.previewImage}
-                        price={offer.price}
-                        isFavorite={offer.isFavorite}
-                        rating={offer.rating}
+                        id={offer.id}
                         title={offer.title}
                         type={offer.type}
-                        id={offer.id}
+                        price={offer.price}
+                        isPremium={offer.isPremium}
+                        isFavorite={offer.isFavorite}
+                        rating={offer.rating}
+                        previewImage={offer.previewImage}
                         onFavoriteToggle={handleFavoriteToggle}
                       />
                     ))}

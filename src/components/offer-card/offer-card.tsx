@@ -2,26 +2,26 @@ import { useState } from 'react';
 import { FavoriteData } from '../../types/offers';
 
 type OfferCardProps = {
-  isPremium: boolean;
-  imageSrc: string;
-  price: number;
-  isFavorite: boolean;
-  rating: number;
+  id: string;
   title: string;
   type: string;
-  id: string;
+  price: number;
+  isPremium: boolean;
+  isFavorite: boolean;
+  rating: number;
+  previewImage: string;
   onFavoriteToggle?: (data: FavoriteData) => void;
 };
 
 function OfferCard({
-  isPremium,
-  imageSrc,
-  price,
-  isFavorite: initialIsFavorite,
-  rating,
+  id,
   title,
   type,
-  id,
+  price,
+  isPremium,
+  isFavorite: initialIsFavorite,
+  rating,
+  previewImage,
   onFavoriteToggle
 }: OfferCardProps): JSX.Element {
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
@@ -45,7 +45,7 @@ function OfferCard({
       )}
       <div className="cities__image-wrapper place-card__image-wrapper">
         <a href="#">
-          <img className="place-card__image" src={imageSrc} width="260" height="200" alt="Place image" />
+          <img className="place-card__image" src={previewImage} width="260" height="200" alt="Place image" />
         </a>
       </div>
       <div className="place-card__info">
