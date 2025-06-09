@@ -1,7 +1,7 @@
-import OfferCard from '../../components/offer-card/offer-card';
 import { Helmet } from 'react-helmet-async';
 import { Offer } from '../../types/offers';
 import { Settings } from '../../const';
+import OfferList from '../../components/offer-list/offer-list';
 
 type MainPageProps = {
   offersCount: number;
@@ -11,7 +11,7 @@ type MainPageProps = {
 
 function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
   const handleFavoriteToggle = () => {
-    // Обработка изменения статуса "Избранное"
+    // Реализация будет добавлена позже
   };
 
   return (
@@ -56,20 +56,10 @@ function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
                 </ul>
               </form>
               <div className="cities__places-list places__list tabs__content">
-                {offers.map((offer) => (
-                  <OfferCard
-                    key={offer.id}
-                    id={offer.id}
-                    title={offer.title}
-                    type={offer.type}
-                    price={offer.price}
-                    isPremium={offer.isPremium}
-                    isFavorite={offer.isFavorite}
-                    rating={offer.rating}
-                    previewImage={offer.previewImage}
-                    onFavoriteToggle={handleFavoriteToggle}
-                  />
-                ))}
+                <OfferList
+                  offers={offers}
+                  onFavoriteToggle={handleFavoriteToggle}
+                />
               </div>
             </section>
             <div className="cities__right-section">

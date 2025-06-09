@@ -1,6 +1,6 @@
-import OfferCard from '../../components/offer-card/offer-card';
 import { Helmet } from 'react-helmet-async';
 import { Offer } from '../../types/offers';
+import OfferList from '../../components/offer-list/offer-list';
 
 type FavoritesPageProps = {
   offers: Offer[];
@@ -8,7 +8,7 @@ type FavoritesPageProps = {
 
 function FavoritesPage({ offers }: FavoritesPageProps): JSX.Element {
   const handleFavoriteToggle = () => {
-    // Обработка изменения статуса "Избранное"
+    // Реализация будет добавлена позже
   };
 
   const favoriteOffers = offers.filter((offer) => offer.isFavorite);
@@ -42,20 +42,10 @@ function FavoritesPage({ offers }: FavoritesPageProps): JSX.Element {
                     </div>
                   </div>
                   <div className="favorites__places">
-                    {favoriteOffers.map((offer) => (
-                      <OfferCard
-                        key={offer.id}
-                        id={offer.id}
-                        title={offer.title}
-                        type={offer.type}
-                        price={offer.price}
-                        isPremium={offer.isPremium}
-                        isFavorite={offer.isFavorite}
-                        rating={offer.rating}
-                        previewImage={offer.previewImage}
-                        onFavoriteToggle={handleFavoriteToggle}
-                      />
-                    ))}
+                    <OfferList
+                      offers={favoriteOffers}
+                      onFavoriteToggle={handleFavoriteToggle}
+                    />
                   </div>
                 </li>
               </ul>
