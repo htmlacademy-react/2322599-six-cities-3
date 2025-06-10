@@ -8,7 +8,6 @@ type FavoritesPageProps = {
 
 function FavoritesPage({ offers }: FavoritesPageProps): JSX.Element {
   const handleFavoriteToggle = () => {
-    // Реализация будет добавлена позже
   };
 
   const favoriteOffers = offers.filter((offer) => offer.isFavorite);

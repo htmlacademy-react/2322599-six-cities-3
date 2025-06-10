@@ -22,7 +22,6 @@ function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
   };
 
   const handleFavoriteToggle = () => {
-    // Реализация будет добавлена позже
   };
 
   return (
