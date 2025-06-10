@@ -11,6 +11,8 @@ type OfferCardProps = {
   rating: number;
   previewImage: string;
   onFavoriteToggle?: (data: FavoriteData) => void;
+  onMouseEnter?: (id: string) => void;
+  onMouseLeave?: () => void;
 };
 
 function OfferCard({
@@ -22,7 +24,9 @@ function OfferCard({
   isFavorite: initialIsFavorite,
   rating,
   previewImage,
-  onFavoriteToggle
+  onFavoriteToggle,
+  onMouseEnter,
+  onMouseLeave,
 }: OfferCardProps): JSX.Element {
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
 
@@ -30,14 +34,20 @@ function OfferCard({
     const newStatus = !isFavorite;
     setIsFavorite(newStatus);
 
-    onFavoriteToggle?.({
-      offerId: id,
-      status: newStatus
-    });
+    if (onFavoriteToggle) {
+      onFavoriteToggle({
+        offerId: id,
+        status: newStatus
+      });
+    }
   };
 
   return (
-    <article className="cities__card place-card">
+    <article
+      className="cities__card place-card"
+      onMouseEnter={() => onMouseEnter?.(id)}
+      onMouseLeave={() => onMouseLeave?.()}
+    >
       {isPremium && (
         <div className="place-card__mark">
           <span>Premium</span>

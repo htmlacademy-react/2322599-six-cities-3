@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Offer } from '../../types/offers';
 import { Settings } from '../../const';
@@ -10,6 +11,16 @@ type MainPageProps = {
 };
 
 function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
+  const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+
+  const handleCardMouseEnter = (id: string) => {
+    setActiveOfferId(id);
+  };
+
+  const handleCardMouseLeave = () => {
+    setActiveOfferId(null);
+  };
+
   const handleFavoriteToggle = () => {
     // Реализация будет добавлена позже
   };
@@ -58,12 +69,19 @@ function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
               <div className="cities__places-list places__list tabs__content">
                 <OfferList
                   offers={offers}
+                  onCardMouseEnter={handleCardMouseEnter}
+                  onCardMouseLeave={handleCardMouseLeave}
                   onFavoriteToggle={handleFavoriteToggle}
                 />
               </div>
             </section>
             <div className="cities__right-section">
-              <section className="cities__map map"></section>
+              <section className="cities__map map">
+                {activeOfferId && (
+                  <div className="map__marker" data-offer-id={activeOfferId}>
+                  </div>
+                )}
+              </section>
             </div>
           </div>
         </div>

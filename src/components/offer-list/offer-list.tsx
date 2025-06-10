@@ -1,12 +1,19 @@
 import OfferCard from '../offer-card/offer-card';
-import { Offer, FavoriteData } from '../../types/offers';
+import { Offer } from '../../types/offers';
 
 type OfferListProps = {
   offers: Offer[];
-  onFavoriteToggle?: (data: FavoriteData) => void;
+  onCardMouseEnter?: (id: string) => void;
+  onCardMouseLeave?: () => void;
+  onFavoriteToggle?: (data: { offerId: string; status: boolean }) => void;
 };
 
-function OfferList({ offers, onFavoriteToggle }: OfferListProps): JSX.Element {
+function OfferList({
+  offers,
+  onCardMouseEnter,
+  onCardMouseLeave,
+  onFavoriteToggle
+}: OfferListProps): JSX.Element {
   return (
     <>
       {offers.map((offer) => (
@@ -20,6 +27,8 @@ function OfferList({ offers, onFavoriteToggle }: OfferListProps): JSX.Element {
           isFavorite={offer.isFavorite}
           rating={offer.rating}
           previewImage={offer.previewImage}
+          onMouseEnter={onCardMouseEnter}
+          onMouseLeave={onCardMouseLeave}
           onFavoriteToggle={onFavoriteToggle}
         />
       ))}
