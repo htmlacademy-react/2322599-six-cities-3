@@ -1,5 +1,7 @@
 import { useState, FormEvent, ChangeEvent } from 'react';
 
+const RATING_VALUES = [5, 4, 3, 2, 1];
+
 function ReviewForm(): JSX.Element {
   const [formData, setFormData] = useState({
     rating: '0',
@@ -22,7 +24,7 @@ function ReviewForm(): JSX.Element {
     <form className="reviews__form form" action="#" method="post" onSubmit={handleSubmit}>
       <label className="reviews__label form__label" htmlFor="review">Your review</label>
       <div className="reviews__rating-form form__rating">
-        {[5, 4, 3, 2, 1].map((rating) => (
+        {RATING_VALUES.map((rating) => (
           <>
             <input
               className="form__rating-input visually-hidden"
