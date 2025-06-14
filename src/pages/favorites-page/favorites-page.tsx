@@ -1,9 +1,16 @@
-import OfferCard from '../../components/offer-card/offer-card';
-import { mockOffers } from '../../mocks/offers';
 import { Helmet } from 'react-helmet-async';
+import { Offer } from '../../types/offers';
+import OfferList from '../../components/offer-list/offer-list';
 
-function FavoritesPage(): JSX.Element {
-  const favoriteOffers = mockOffers.filter((offer) => offer.isFavorite);
+type FavoritesPageProps = {
+  offers: Offer[];
+};
+
+function FavoritesPage({ offers }: FavoritesPageProps): JSX.Element {
+  const handleFavoriteToggle = () => {
+  };
+
+  const favoriteOffers = offers.filter((offer) => offer.isFavorite);
 
   return (
     <>
@@ -34,18 +41,10 @@ function FavoritesPage(): JSX.Element {
                     </div>
                   </div>
                   <div className="favorites__places">
-                    {favoriteOffers.map((offer) => (
-                      <OfferCard
-                        key={offer.id}
-                        isPremium={offer.isPremium}
-                        imageSrc={offer.previewImage}
-                        price={offer.price}
-                        isFavorite={offer.isFavorite}
-                        rating={offer.rating}
-                        title={offer.title}
-                        type={offer.type}
-                      />
-                    ))}
+                    <OfferList
+                      offers={favoriteOffers}
+                      onFavoriteToggle={handleFavoriteToggle}
+                    />
                   </div>
                 </li>
               </ul>

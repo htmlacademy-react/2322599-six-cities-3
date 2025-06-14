@@ -1,26 +1,4 @@
-export type Offer = {
-  id: string;
-  title: string;
-  type: string;
-  price: number;
-  city: {
-    name: string;
-    location: {
-      latitude: number;
-      longitude: number;
-      zoom: number;
-    };
-  };
-  location: {
-    latitude: number;
-    longitude: number;
-    zoom: number;
-  };
-  isFavorite: boolean;
-  isPremium: boolean;
-  rating: number;
-  previewImage: string;
-};
+import { Offer } from '../types/offers';
 
 export const mockOffers: Offer[] = [
   {
@@ -45,6 +23,16 @@ export const mockOffers: Offer[] = [
     isPremium: false,
     rating: 4,
     previewImage: 'img/apartment-01.jpg',
+    description: 'A quiet cozy and picturesque that hides behind a a river by the unique lightness of Amsterdam. The building is green and from 18th century.',
+    bedrooms: 3,
+    goods: ['Wi-Fi', 'Washing machine', 'Towels', 'Heating', 'Coffee machine', 'Baby seat', 'Kitchen', 'Dishwasher', 'Cabel TV', 'Fridge'],
+    host: {
+      name: 'Angelina',
+      avatarUrl: 'img/avatar-angelina.jpg',
+      isPro: true,
+    },
+    images: ['img/apartment-01.jpg', 'img/studio-01.jpg', 'img/apartment-02.jpg'],
+    maxAdults: 4
   },
   {
     id: '6af6f711-c28d-4121-82cd-e0b462a27f01',
@@ -68,6 +56,16 @@ export const mockOffers: Offer[] = [
     isPremium: false,
     rating: 4,
     previewImage: 'img/room.jpg',
+    description: 'A quiet cozy and picturesque that hides behind a a river by the unique lightness of Amsterdam.',
+    bedrooms: 1,
+    goods: ['Wi-Fi', 'Washing machine', 'Towels', 'Heating', 'Coffee machine', 'Fridge'],
+    host: {
+      name: 'Max',
+      avatarUrl: 'img/avatar-max.jpg',
+      isPro: false,
+    },
+    images: ['img/room.jpg', 'img/apartment-01.jpg', 'img/apartment-02.jpg'],
+    maxAdults: 2
   },
   {
     id: '6af6f711-c28d-4121-82cd-e0b462a27f02',
@@ -91,6 +89,16 @@ export const mockOffers: Offer[] = [
     isPremium: false,
     rating: 4,
     previewImage: 'img/apartment-02.jpg',
+    description: 'An independent House, strategically located between Rembrand Square and National Opera.',
+    bedrooms: 2,
+    goods: ['Wi-Fi', 'Kitchen', 'Dishwasher', 'Cabel TV', 'Fridge'],
+    host: {
+      name: 'Oliver',
+      avatarUrl: 'img/avatar-angelina.jpg',
+      isPro: true,
+    },
+    images: ['img/apartment-02.jpg', 'img/apartment-01.jpg', 'img/studio-01.jpg'],
+    maxAdults: 3
   },
   {
     id: '6af6f711-c28d-4121-82cd-e0b462a27f03',
@@ -114,6 +122,16 @@ export const mockOffers: Offer[] = [
     isPremium: true,
     rating: 5,
     previewImage: 'img/apartment-03.jpg',
+    description: 'An independent House, strategically located between Rembrand Square and National Opera, but where the bustle of the city comes to rest in this alley flowery and colorful.',
+    bedrooms: 3,
+    goods: ['Wi-Fi', 'Washing machine', 'Towels', 'Heating', 'Coffee machine', 'Baby seat', 'Kitchen', 'Dishwasher', 'Cabel TV', 'Fridge'],
+    host: {
+      name: 'Angelina',
+      avatarUrl: 'img/avatar-angelina.jpg',
+      isPro: true,
+    },
+    images: ['img/apartment-03.jpg', 'img/apartment-01.jpg', 'img/apartment-02.jpg'],
+    maxAdults: 4
   },
   {
     id: '6af6f711-c28d-4121-82cd-e0b462a27f04',
@@ -137,5 +155,15 @@ export const mockOffers: Offer[] = [
     isPremium: false,
     rating: 4,
     previewImage: 'img/room.jpg',
-  },
+    description: 'A quiet cozy and picturesque that hides behind a a river by the unique lightness of Amsterdam.',
+    bedrooms: 1,
+    goods: ['Wi-Fi', 'Washing machine', 'Towels', 'Heating', 'Coffee machine', 'Fridge'],
+    host: {
+      name: 'Max',
+      avatarUrl: 'img/avatar-max.jpg',
+      isPro: false,
+    },
+    images: ['img/room.jpg', 'img/apartment-01.jpg', 'img/apartment-02.jpg'],
+    maxAdults: 2
+  }
 ];

@@ -1,14 +1,29 @@
-import OfferCard from '../../components/offer-card/offer-card';
-import { mockOffers } from '../../mocks/offers';
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { Offer } from '../../types/offers';
 import { Settings } from '../../const';
+import OfferList from '../../components/offer-list/offer-list';
 
 type MainPageProps = {
   offersCount: number;
   city: string;
-}
+  offers: Offer[];
+};
 
-function MainPage({ offersCount, city }: MainPageProps): JSX.Element {
+function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
+  const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+
+  const handleCardMouseEnter = (id: string) => {
+    setActiveOfferId(id);
+  };
+
+  const handleCardMouseLeave = () => {
+    setActiveOfferId(null);
+  };
+
+  const handleFavoriteToggle = () => {
+  };
+
   return (
     <>
       <Helmet>
@@ -51,22 +66,21 @@ function MainPage({ offersCount, city }: MainPageProps): JSX.Element {
                 </ul>
               </form>
               <div className="cities__places-list places__list tabs__content">
-                {mockOffers.map((offer) => (
-                  <OfferCard
-                    key={offer.id}
-                    isPremium={offer.isPremium}
-                    imageSrc={offer.previewImage}
-                    price={offer.price}
-                    isFavorite={offer.isFavorite}
-                    rating={offer.rating}
-                    title={offer.title}
-                    type={offer.type}
-                  />
-                ))}
+                <OfferList
+                  offers={offers}
+                  onCardMouseEnter={handleCardMouseEnter}
+                  onCardMouseLeave={handleCardMouseLeave}
+                  onFavoriteToggle={handleFavoriteToggle}
+                />
               </div>
             </section>
             <div className="cities__right-section">
-              <section className="cities__map map"></section>
+              <section className="cities__map map">
+                {activeOfferId && (
+                  <div className="map__marker" data-offer-id={activeOfferId}>
+                  </div>
+                )}
+              </section>
             </div>
           </div>
         </div>

@@ -1,33 +1,69 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FavoriteData, Offer } from '../../types/offers';
+import './offer-card.css';
+
 type OfferCardProps = {
-  isPremium: boolean;
-  imageSrc: string;
-  price: number;
-  isFavorite: boolean;
-  rating: number;
-  title: string;
-  type: string;
+  offer: Offer;
+  onFavoriteToggle?: (data: FavoriteData) => void;
+  onMouseEnter?: (id: string) => void;
+  onMouseLeave?: () => void;
 };
 
 function OfferCard({
-  isPremium,
-  imageSrc,
-  price,
-  isFavorite,
-  rating,
-  title,
-  type
+  offer,
+  onFavoriteToggle,
+  onMouseEnter,
+  onMouseLeave,
 }: OfferCardProps): JSX.Element {
+
+  const {
+    id,
+    title,
+    type,
+    price,
+    isPremium,
+    isFavorite: initialIsFavorite,
+    rating,
+    previewImage,
+  } = offer;
+
+  const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
+  const widthPercent = Math.round(rating) * 20;
+  const ratingLineClass = `rating__stars-${widthPercent}`;
+
+  const handleFavoriteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const newStatus = !isFavorite;
+    setIsFavorite(newStatus);
+
+    onFavoriteToggle?.({
+      offerId: id,
+      status: newStatus
+    });
+  };
+
   return (
-    <article className="cities__card place-card">
+    <article
+      className="cities__card place-card"
+      onMouseEnter={() => onMouseEnter?.(id)}
+      onMouseLeave={() => onMouseLeave?.()}
+    >
       {isPremium && (
         <div className="place-card__mark">
           <span>Premium</span>
         </div>
       )}
       <div className="cities__image-wrapper place-card__image-wrapper">
-        <a href="#">
-          <img className="place-card__image" src={imageSrc} width="260" height="200" alt="Place image" />
-        </a>
+        <Link to={`/offer/${id}`}>
+          <img
+            className="place-card__image"
+            src={previewImage}
+            width="260"
+            height="200"
+            alt="Place image"
+          />
+        </Link>
       </div>
       <div className="place-card__info">
         <div className="place-card__price-wrapper">
@@ -38,21 +74,26 @@ function OfferCard({
           <button
             className={`place-card__bookmark-button button ${isFavorite ? 'place-card__bookmark-button--active' : ''}`}
             type="button"
+            onClick={handleFavoriteClick}
           >
             <svg className="place-card__bookmark-icon" width="18" height="19">
               <use xlinkHref="#icon-bookmark"></use>
             </svg>
-            <span className="visually-hidden">{isFavorite ? 'In bookmarks' : 'To bookmarks'}</span>
+            <span className="visually-hidden">
+              {isFavorite ? 'In bookmarks' : 'To bookmarks'}
+            </span>
           </button>
         </div>
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">
-            <span style={{ width: `${Math.round(rating) * 20}%` }}></span>
+            <span className={ratingLineClass}></span>
             <span className="visually-hidden">Rating</span>
           </div>
         </div>
         <h2 className="place-card__name">
-          <a href="#">{title}</a>
+          <Link to={`/offer/${id}`}>
+            {title}
+          </Link>
         </h2>
         <p className="place-card__type">{type}</p>
       </div>
