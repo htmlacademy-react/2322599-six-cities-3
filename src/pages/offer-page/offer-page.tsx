@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import Map from '../../components/map/map';
 import { Offer } from '../../types/offers';
 import { Review } from '../../types/reviews';
 import ReviewForm from '../../components/review-form/review-form';
@@ -10,6 +11,7 @@ type OfferPageProps = {
 
 function OfferPage({ offers, reviews }: OfferPageProps): JSX.Element {
   const currentOffer = offers[0];
+  const nearOffers = offers.slice(1, 4);
 
   return (
     <>
@@ -121,13 +123,19 @@ function OfferPage({ offers, reviews }: OfferPageProps): JSX.Element {
               </section>
             </div>
           </div>
-          <section className="offer__map map" />
+          <section className="offer__map map">
+            <Map
+              city={currentOffer.city}
+              offers={[currentOffer, ...nearOffers]}
+              selectedOfferId={currentOffer.id}
+            />
+          </section>
         </section>
         <div className="container">
           <section className="near-places places">
             <h2 className="near-places__title">Other places in the neighbourhood</h2>
             <div className="near-places__list places__list">
-              {offers.slice(1, 4).map((offer) => (
+              {nearOffers.map((offer) => (
                 <article key={offer.id} className="near-places__card place-card">
                   {offer.isPremium && (
                     <div className="place-card__mark">
