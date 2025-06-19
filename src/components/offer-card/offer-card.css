@@ -4,17 +4,3 @@
 .rating__stars-60 { width: 60%; }
 .rating__stars-80 { width: 80%; }
 .rating__stars-100 { width: 100%; }
-
-.near-places__card.place-card {
-  width: 260px;
-  margin-left: 8px;
-  margin-bottom: 24px;
-}
-
-.near-places__card .place-card__image-wrapper {
-  margin-bottom: 0;
-}
-
-.near-places__card .place-card__info {
-  padding: 0;
-}

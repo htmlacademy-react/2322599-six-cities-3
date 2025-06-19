@@ -75,14 +75,13 @@ function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
                   <li className="places__option" tabIndex={0}>Top rated first</li>
                 </ul>
               </form>
-              <div className="cities__places-list places__list tabs__content">
-                <OfferList
-                  offers={offers}
-                  onCardMouseEnter={handleCardMouseEnter}
-                  onCardMouseLeave={handleCardMouseLeave}
-                  onFavoriteToggle={handleFavoriteToggle}
-                />
-              </div>
+              <OfferList
+                offers={offers}
+                onCardMouseEnter={handleCardMouseEnter}
+                onCardMouseLeave={handleCardMouseLeave}
+                onFavoriteToggle={handleFavoriteToggle}
+                block="cities"
+              />
             </section>
             <div className="cities__right-section">
               <section className="cities__map map">

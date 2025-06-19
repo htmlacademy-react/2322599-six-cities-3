@@ -1,12 +1,12 @@
 import OfferCard from '../offer-card/offer-card';
-import { Offer } from '../../types/offers';
+import { Offer, CardListType } from '../../types/offers';
 
 type OfferListProps = {
   offers: Offer[];
   onCardMouseEnter?: (id: string) => void;
   onCardMouseLeave?: () => void;
   onFavoriteToggle?: (data: { offerId: string; status: boolean }) => void;
-  listType?: 'main' | 'nearby';
+  block: CardListType;
 };
 
 function OfferList({
@@ -14,10 +14,10 @@ function OfferList({
   onCardMouseEnter,
   onCardMouseLeave,
   onFavoriteToggle,
-  listType = 'main'
+  block = 'cities'
 }: OfferListProps): JSX.Element {
   return (
-    <div className={`${listType === 'nearby' ? 'near-places' : 'cities__places'}-list places__list tabs__content`}>
+    <div className={`${block}__${block === 'favorites' ? 'places' : 'places-list'} places__list tabs__content`}>
       {offers.map((offer) => (
         <OfferCard
           key={offer.id}
@@ -25,7 +25,7 @@ function OfferList({
           onMouseEnter={onCardMouseEnter}
           onMouseLeave={onCardMouseLeave}
           onFavoriteToggle={onFavoriteToggle}
-          cardType={listType}
+          block={block}
         />
       ))}
     </div>

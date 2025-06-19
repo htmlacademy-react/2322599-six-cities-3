@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FavoriteData, Offer } from '../../types/offers';
+import { FavoriteData, Offer, CardListType } from '../../types/offers';
 import './offer-card.css';
 
 type OfferCardProps = {
@@ -8,7 +8,7 @@ type OfferCardProps = {
   onFavoriteToggle?: (data: FavoriteData) => void;
   onMouseEnter?: (id: string) => void;
   onMouseLeave?: () => void;
-  cardType?: 'main' | 'nearby';
+  block: CardListType;
 };
 
 function OfferCard({
@@ -16,7 +16,7 @@ function OfferCard({
   onFavoriteToggle,
   onMouseEnter,
   onMouseLeave,
-  cardType = 'main'
+  block = 'cities'
 }: OfferCardProps): JSX.Element {
   const {
     id,
@@ -46,7 +46,7 @@ function OfferCard({
 
   return (
     <article
-      className={`${cardType === 'nearby' ? 'near-places' : 'cities'}__card place-card`}
+      className={`${block}__card place-card`}
       onMouseEnter={() => onMouseEnter?.(id)}
       onMouseLeave={() => onMouseLeave?.()}
     >
@@ -55,7 +55,7 @@ function OfferCard({
           <span>Premium</span>
         </div>
       )}
-      <div className={`${cardType === 'nearby' ? 'near-places' : 'cities'}__image-wrapper place-card__image-wrapper`}>
+      <div className={`${block}__image-wrapper place-card__image-wrapper`}>
         <Link to={`/offer/${id}`}>
           <img
             className="place-card__image"
