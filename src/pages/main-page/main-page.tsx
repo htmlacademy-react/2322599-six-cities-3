@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import Map from '../../components/map/map';
 import { Offer } from '../../types/offers';
 import { Settings } from '../../const';
 import OfferList from '../../components/offer-list/offer-list';
@@ -22,6 +23,15 @@ function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
   };
 
   const handleFavoriteToggle = () => {
+  };
+
+  const currentCity = offers.length > 0 ? offers[0].city : {
+    name: 'Amsterdam',
+    location: {
+      latitude: 52.374031,
+      longitude: 4.88969,
+      zoom: 12
+    }
   };
 
   return (
@@ -76,10 +86,11 @@ function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
             </section>
             <div className="cities__right-section">
               <section className="cities__map map">
-                {activeOfferId && (
-                  <div className="map__marker" data-offer-id={activeOfferId}>
-                  </div>
-                )}
+                <Map
+                  city={currentCity}
+                  offers={offers}
+                  selectedOfferId={activeOfferId || undefined}
+                />
               </section>
             </div>
           </div>

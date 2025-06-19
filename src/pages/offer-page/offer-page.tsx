@@ -1,7 +1,10 @@
 import { Helmet } from 'react-helmet-async';
+import Map from '../../components/map/map';
 import { Offer } from '../../types/offers';
 import { Review } from '../../types/reviews';
 import ReviewForm from '../../components/review-form/review-form';
+import ReviewsList from '../../components/reviews-list/reviews-list';
+import OfferList from '../../components/offer-list/offer-list';
 
 type OfferPageProps = {
   offers: Offer[];
@@ -10,6 +13,7 @@ type OfferPageProps = {
 
 function OfferPage({ offers, reviews }: OfferPageProps): JSX.Element {
   const currentOffer = offers[0];
+  const nearOffers = offers.slice(1, 4);
 
   return (
     <>
@@ -23,7 +27,7 @@ function OfferPage({ offers, reviews }: OfferPageProps): JSX.Element {
             <div className="offer__gallery">
               {currentOffer.images.slice(0, 6).map((image) => (
                 <div key={image} className="offer__image-wrapper">
-                  <img className="offer__image" src={image} alt="Photo studio" />
+                  <img className="offer__image" src={image} alt="Place image" />
                 </div>
               ))}
             </div>
@@ -93,79 +97,26 @@ function OfferPage({ offers, reviews }: OfferPageProps): JSX.Element {
 
               <section className="offer__reviews reviews">
                 <h2 className="reviews__title">Reviews · <span className="reviews__amount">{reviews.length}</span></h2>
-                <ul className="reviews__list">
-                  {reviews.map((review) => (
-                    <li key={review.id} className="reviews__item">
-                      <div className="reviews__user user">
-                        <div className="reviews__avatar-wrapper user__avatar-wrapper">
-                          <img className="reviews__avatar user__avatar" src={review.user.avatarUrl} width="54" height="54" alt="Reviews avatar" />
-                        </div>
-                        <span className="reviews__user-name">{review.user.name}</span>
-                      </div>
-                      <div className="reviews__info">
-                        <div className="reviews__rating rating">
-                          <div className="reviews__stars rating__stars">
-                            <span style={{ width: `${review.rating * 20}%` }} />
-                            <span className="visually-hidden">Rating</span>
-                          </div>
-                        </div>
-                        <p className="reviews__text">{review.comment}</p>
-                        <time className="reviews__time" dateTime={review.date}>
-                          {new Date(review.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                        </time>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+                <ReviewsList reviews={reviews} />
                 <ReviewForm />
               </section>
             </div>
           </div>
-          <section className="offer__map map" />
+          <section className="offer__map map">
+            <Map
+              city={currentOffer.city}
+              offers={[currentOffer, ...nearOffers]}
+              selectedOfferId={currentOffer.id}
+            />
+          </section>
         </section>
         <div className="container">
           <section className="near-places places">
             <h2 className="near-places__title">Other places in the neighbourhood</h2>
-            <div className="near-places__list places__list">
-              {offers.slice(1, 4).map((offer) => (
-                <article key={offer.id} className="near-places__card place-card">
-                  {offer.isPremium && (
-                    <div className="place-card__mark">
-                      <span>Premium</span>
-                    </div>
-                  )}
-                  <div className="near-places__image-wrapper place-card__image-wrapper">
-                    <a href="#">
-                      <img className="place-card__image" src={offer.previewImage} width="260" height="200" alt="Place image" />
-                    </a>
-                  </div>
-                  <div className="place-card__info">
-                    <div className="place-card__price-wrapper">
-                      <div className="place-card__price">
-                        <b className="place-card__price-value">€{offer.price}</b>
-                        <span className="place-card__price-text">&#47;&nbsp;night</span>
-                      </div>
-                      <button className={`place-card__bookmark-button button ${offer.isFavorite ? 'place-card__bookmark-button--active' : ''}`} type="button">
-                        <svg className="place-card__bookmark-icon" width="18" height="19">
-                          <use xlinkHref="#icon-bookmark" />
-                        </svg>
-                        <span className="visually-hidden">{offer.isFavorite ? 'In bookmarks' : 'To bookmarks'}</span>
-                      </button>
-                    </div>
-                    <div className="place-card__rating rating">
-                      <div className="place-card__stars rating__stars">
-                        <span style={{ width: `${offer.rating * 20}%` }} />
-                        <span className="visually-hidden">Rating</span>
-                      </div>
-                    </div>
-                    <h2 className="place-card__name">
-                      <a href="#">{offer.title}</a>
-                    </h2>
-                    <p className="place-card__type">{offer.type}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
+            <OfferList
+              offers={nearOffers}
+              listType="nearby"
+            />
           </section>
         </div>
       </main>
