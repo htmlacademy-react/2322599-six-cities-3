@@ -8,6 +8,7 @@ type OfferCardProps = {
   onFavoriteToggle?: (data: FavoriteData) => void;
   onMouseEnter?: (id: string) => void;
   onMouseLeave?: () => void;
+  cardType?: 'main' | 'nearby';
 };
 
 function OfferCard({
@@ -15,8 +16,8 @@ function OfferCard({
   onFavoriteToggle,
   onMouseEnter,
   onMouseLeave,
+  cardType = 'main'
 }: OfferCardProps): JSX.Element {
-
   const {
     id,
     title,
@@ -45,7 +46,7 @@ function OfferCard({
 
   return (
     <article
-      className="cities__card place-card"
+      className={`${cardType === 'nearby' ? 'near-places' : 'cities'}__card place-card`}
       onMouseEnter={() => onMouseEnter?.(id)}
       onMouseLeave={() => onMouseLeave?.()}
     >
@@ -54,7 +55,7 @@ function OfferCard({
           <span>Premium</span>
         </div>
       )}
-      <div className="cities__image-wrapper place-card__image-wrapper">
+      <div className={`${cardType === 'nearby' ? 'near-places' : 'cities'}__image-wrapper place-card__image-wrapper`}>
         <Link to={`/offer/${id}`}>
           <img
             className="place-card__image"
