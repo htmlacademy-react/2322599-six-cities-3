@@ -42,3 +42,5 @@ export type FavoriteData = {
   offerId: string;
   status: boolean;
 };
+
+export type CardListType = 'cities' | 'favorites' | 'near-places';

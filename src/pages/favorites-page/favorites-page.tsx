@@ -44,6 +44,7 @@ function FavoritesPage({ offers }: FavoritesPageProps): JSX.Element {
                     <OfferList
                       offers={favoriteOffers}
                       onFavoriteToggle={handleFavoriteToggle}
+                      block="favorites"
                     />
                   </div>
                 </li>

@@ -115,7 +115,7 @@ function OfferPage({ offers, reviews }: OfferPageProps): JSX.Element {
             <h2 className="near-places__title">Other places in the neighbourhood</h2>
             <OfferList
               offers={nearOffers}
-              listType="nearby"
+              block="near-places"
             />
           </section>
         </div>
