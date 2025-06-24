@@ -5,7 +5,6 @@ type OfferListProps = {
   offers: Offer[];
   onCardMouseEnter?: (id: string) => void;
   onCardMouseLeave?: () => void;
-  onFavoriteToggle?: (data: { offerId: string; status: boolean }) => void;
   block: CardListType;
 };
 
@@ -13,7 +12,6 @@ function OfferList({
   offers,
   onCardMouseEnter,
   onCardMouseLeave,
-  onFavoriteToggle,
   block = 'cities'
 }: OfferListProps): JSX.Element {
   return (
@@ -24,7 +22,6 @@ function OfferList({
           offer={offer}
           onMouseEnter={onCardMouseEnter}
           onMouseLeave={onCardMouseLeave}
-          onFavoriteToggle={onFavoriteToggle}
           block={block}
         />
       ))}
