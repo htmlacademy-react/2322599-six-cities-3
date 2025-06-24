@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Map from '../../components/map/map';
 import { useAppDispatch, useAppSelector } from '../../hooks';
@@ -21,6 +21,25 @@ function MainPage(): JSX.Element {
   useEffect(() => {
     dispatch(changeCity('Paris'));
   }, [dispatch]);
+
+  const sortedOffers = useMemo(() => {
+    const offersCopy = [...currentCityOffers];
+
+    switch (currentSort) {
+      case 'Price: low to high':
+        return offersCopy.sort((a, b) => a.price - b.price);
+
+      case 'Price: high to low':
+        return offersCopy.sort((a, b) => b.price - a.price);
+
+      case 'Top rated first':
+        return offersCopy.sort((a, b) => b.rating - a.rating);
+
+      case 'Popular':
+      default:
+        return offersCopy;
+    }
+  }, [currentCityOffers, currentSort]);
 
   const handleCityChange = (city: CityName) => {
     dispatch(changeCity(city));
@@ -68,7 +87,7 @@ function MainPage(): JSX.Element {
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
               <b className="places__found">
-                {currentCityOffers.length} {currentCityOffers.length === 1 ? 'place' : 'places'} to stay in {currentCityName}
+                {sortedOffers.length} {sortedOffers.length === 1 ? 'place' : 'places'} to stay in {currentCityName}
               </b>
 
               <SortingOptions
@@ -77,7 +96,7 @@ function MainPage(): JSX.Element {
               />
 
               <OfferList
-                offers={currentCityOffers}
+                offers={sortedOffers}
                 onCardMouseEnter={handleCardMouseEnter}
                 onCardMouseLeave={handleCardMouseLeave}
                 block="cities"
@@ -85,6 +104,7 @@ function MainPage(): JSX.Element {
             </section>
             <div className="cities__right-section">
               <section className="cities__map map">
+
                 <Map
                   city={currentCity}
                   offers={currentCityOffers}
