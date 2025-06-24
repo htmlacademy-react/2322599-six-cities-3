@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import App from './components/app/app';
-import { Settings } from './const';
 import { mockOffers } from './mocks/offers';
 import { mockReviews } from './mocks/reviews';
 import { store } from './store';
@@ -15,7 +14,6 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <App
-        settings={Settings}
         offers={mockOffers}
         reviews={mockReviews}
       />

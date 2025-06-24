@@ -1,6 +1,9 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import { AppRoute, AuthorizationStatus, Settings } from '../../const';
+import { useAppDispatch } from '../../hooks/index';
+import { AppRoute, AuthorizationStatus } from '../../const';
+import { fillOffers } from '../../store/action';
 import MainPage from '../../pages/main-page/main-page';
 import LoginPage from '../../pages/login-page/login-page';
 import FavoritesPage from '../../pages/favorites-page/favorites-page';
@@ -12,12 +15,17 @@ import { Offer } from '../../types/offers';
 import { Review } from '../../types/reviews';
 
 type AppProps = {
-  settings: typeof Settings;
   offers: Offer[];
   reviews: Review[];
 }
 
-function App({ settings, offers, reviews }: AppProps): JSX.Element {
+function App({ offers, reviews }: AppProps): JSX.Element {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fillOffers(offers));
+  }, [dispatch, offers]);
+
   return (
     <HelmetProvider>
       <BrowserRouter>
@@ -25,21 +33,22 @@ function App({ settings, offers, reviews }: AppProps): JSX.Element {
           <Route element={<Layout authorizationStatus={AuthorizationStatus.Auth} />}>
             <Route
               path={AppRoute.Root}
-              element={<MainPage offersCount={settings.OffersCount} city={settings.City} offers={offers} />}
+              element={<MainPage />}
             />
             <Route
               path={AppRoute.Favorites}
               element={
                 <PrivateRoute authorizationStatus={AuthorizationStatus.NoAuth}>
-                  <FavoritesPage offers={offers} />
+                  <FavoritesPage />
                 </PrivateRoute>
               }
             />
-            <Route path={AppRoute.Offer} element={<OfferPage offers={offers} reviews={reviews} />} />
+            <Route
+              path={AppRoute.Offer}
+              element={<OfferPage offers={offers} reviews={reviews} />}
+            />
           </Route>
-
           <Route path={AppRoute.Login} element={<LoginPage />} />
-
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>

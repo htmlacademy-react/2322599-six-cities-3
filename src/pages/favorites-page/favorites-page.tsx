@@ -1,15 +1,9 @@
 import { Helmet } from 'react-helmet-async';
-import { Offer } from '../../types/offers';
+import { useAppSelector } from '../../hooks';
 import OfferList from '../../components/offer-list/offer-list';
 
-type FavoritesPageProps = {
-  offers: Offer[];
-};
-
-function FavoritesPage({ offers }: FavoritesPageProps): JSX.Element {
-  const handleFavoriteToggle = () => {
-  };
-
+function FavoritesPage(): JSX.Element {
+  const offers = useAppSelector((state) => state.offers);
   const favoriteOffers = offers.filter((offer) => offer.isFavorite);
 
   return (
@@ -43,7 +37,6 @@ function FavoritesPage({ offers }: FavoritesPageProps): JSX.Element {
                   <div className="favorites__places">
                     <OfferList
                       offers={favoriteOffers}
-                      onFavoriteToggle={handleFavoriteToggle}
                       block="favorites"
                     />
                   </div>
