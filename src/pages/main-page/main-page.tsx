@@ -1,18 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Map from '../../components/map/map';
-import { Offer } from '../../types/offers';
-import { Settings } from '../../const';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 import OfferList from '../../components/offer-list/offer-list';
+import CitiesList from '../../components/cities-list/cities-list';
+import { getCurrentCityName, getCurrentCityOffers } from '../../store/selectors';
+import { changeCity } from '../../store/action';
+import type { CityName } from '../../components/cities-list/cities-list';
 
-type MainPageProps = {
-  offersCount: number;
-  city: string;
-  offers: Offer[];
-};
-
-function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
+function MainPage(): JSX.Element {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+
+  const currentCityName = useAppSelector(getCurrentCityName) as CityName;
+  const currentCityOffers = useAppSelector(getCurrentCityOffers);
+
+  useEffect(() => {
+    dispatch(changeCity('Paris'));
+  }, [dispatch]);
+
+  const handleCityChange = (city: CityName) => {
+    dispatch(changeCity(city));
+  };
 
   const handleCardMouseEnter = (id: string) => {
     setActiveOfferId(id);
@@ -22,17 +31,16 @@ function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
     setActiveOfferId(null);
   };
 
-  const handleFavoriteToggle = () => {
-  };
-
-  const currentCity = offers.length > 0 ? offers[0].city : {
-    name: 'Amsterdam',
-    location: {
-      latitude: 52.374031,
-      longitude: 4.88969,
-      zoom: 12
-    }
-  };
+  const currentCity = currentCityOffers.length > 0
+    ? currentCityOffers[0].city
+    : {
+      name: 'Paris',
+      location: {
+        latitude: 48.85661,
+        longitude: 2.351499,
+        zoom: 12
+      }
+    };
 
   return (
     <>
@@ -43,23 +51,18 @@ function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
       <main className="page__main page__main--index">
         <h1 className="visually-hidden">Cities</h1>
         <div className="tabs">
-          <section className="locations container">
-            <ul className="locations__list tabs__list">
-              {Settings.Cities.map((cityName) => (
-                <li key={cityName} className="locations__item">
-                  <a className={`locations__item-link tabs__item ${cityName === city ? 'tabs__item--active' : ''}`} href="#">
-                    <span>{cityName}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
+          <CitiesList
+            currentCity={currentCityName}
+            onCityChange={handleCityChange}
+          />
         </div>
         <div className="cities">
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{offersCount} places to stay in {city}</b>
+              <b className="places__found">
+                {currentCityOffers.length} {currentCityOffers.length === 1 ? 'place' : 'places'} to stay in {currentCityName}
+              </b>
               <form className="places__sorting" action="#" method="get">
                 <span className="places__sorting-caption">Sort by</span>
                 <span className="places__sorting-type" tabIndex={0}>
@@ -76,10 +79,9 @@ function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
                 </ul>
               </form>
               <OfferList
-                offers={offers}
+                offers={currentCityOffers}
                 onCardMouseEnter={handleCardMouseEnter}
                 onCardMouseLeave={handleCardMouseLeave}
-                onFavoriteToggle={handleFavoriteToggle}
                 block="cities"
               />
             </section>
@@ -87,7 +89,7 @@ function MainPage({ offersCount, city, offers }: MainPageProps): JSX.Element {
               <section className="cities__map map">
                 <Map
                   city={currentCity}
-                  offers={offers}
+                  offers={currentCityOffers}
                   selectedOfferId={activeOfferId || undefined}
                 />
               </section>

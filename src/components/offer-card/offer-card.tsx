@@ -1,47 +1,43 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FavoriteData, Offer, CardListType } from '../../types/offers';
+import { useAppDispatch } from '../../hooks';
+import { updateOfferFavoriteStatus } from '../../store/action';
+import { Offer, CardListType } from '../../types/offers';
 import './offer-card.css';
 
 type OfferCardProps = {
   offer: Offer;
-  onFavoriteToggle?: (data: FavoriteData) => void;
+  block: CardListType;
   onMouseEnter?: (id: string) => void;
   onMouseLeave?: () => void;
-  block: CardListType;
 };
 
 function OfferCard({
   offer,
-  onFavoriteToggle,
+  block = 'cities',
   onMouseEnter,
-  onMouseLeave,
-  block = 'cities'
+  onMouseLeave
 }: OfferCardProps): JSX.Element {
+  const dispatch = useAppDispatch();
   const {
     id,
     title,
     type,
     price,
     isPremium,
-    isFavorite: initialIsFavorite,
+    isFavorite,
     rating,
     previewImage,
   } = offer;
 
-  const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const widthPercent = Math.round(rating) * 20;
   const ratingLineClass = `rating__stars-${widthPercent}`;
 
   const handleFavoriteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const newStatus = !isFavorite;
-    setIsFavorite(newStatus);
-
-    onFavoriteToggle?.({
+    dispatch(updateOfferFavoriteStatus({
       offerId: id,
-      status: newStatus
-    });
+      status: !isFavorite
+    }));
   };
 
   return (
