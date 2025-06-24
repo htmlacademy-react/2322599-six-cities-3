@@ -3,7 +3,7 @@ import { changeCity, fillOffers, updateOfferFavoriteStatus } from './action';
 import { Settings } from '../const';
 import type { Offer } from '../types/offers';
 
-type State = {
+export type State = {
   currentCityName: string;
   offers: Offer[];
 };

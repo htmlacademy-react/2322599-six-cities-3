@@ -4,15 +4,12 @@ import Map from '../../components/map/map';
 import { useAppSelector } from '../../hooks';
 import OfferList from '../../components/offer-list/offer-list';
 import { Settings } from '../../const';
+import { getCurrentCityName, getCurrentCityOffers } from '../../store/selectors';
 
 function MainPage(): JSX.Element {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
-  const currentCityName = useAppSelector((state) => state.currentCityName);
-  const offers = useAppSelector((state) => state.offers);
-
-  const currentCityOffers = offers.filter(
-    (offer) => offer.city.name === currentCityName
-  );
+  const currentCityName = useAppSelector(getCurrentCityName);
+  const currentCityOffers = useAppSelector(getCurrentCityOffers);
 
   const currentCity = currentCityOffers.length > 0
     ? currentCityOffers[0].city
@@ -46,7 +43,10 @@ function MainPage(): JSX.Element {
             <ul className="locations__list tabs__list">
               {Settings.Cities.map((cityName) => (
                 <li key={cityName} className="locations__item">
-                  <a className={`locations__item-link tabs__item ${cityName === currentCityName ? 'tabs__item--active' : ''}`} href="#">
+                  <a
+                    className={`locations__item-link tabs__item ${cityName === currentCityName ? 'tabs__item--active' : ''}`}
+                    href="#"
+                  >
                     <span>{cityName}</span>
                   </a>
                 </li>
