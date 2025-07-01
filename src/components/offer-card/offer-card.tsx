@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom';
+import { Link, generatePath } from 'react-router-dom';
 import { useAppDispatch } from '../../hooks';
 import { updateOfferFavoriteStatus } from '../../store/action';
 import { Offer, CardListType } from '../../types/offers';
+import { AppRoute } from '../../const';
 import './offer-card.css';
 
 type OfferCardProps = {
@@ -52,7 +53,7 @@ function OfferCard({
         </div>
       )}
       <div className={`${block}__image-wrapper place-card__image-wrapper`}>
-        <Link to={`/offer/${id}`}>
+        <Link to={generatePath(AppRoute.Offer, { id })}>
           <img
             className="place-card__image"
             src={previewImage}
@@ -88,7 +89,7 @@ function OfferCard({
           </div>
         </div>
         <h2 className="place-card__name">
-          <Link to={`/offer/${id}`}>
+          <Link to={generatePath(AppRoute.Offer, { id })}>
             {title}
           </Link>
         </h2>

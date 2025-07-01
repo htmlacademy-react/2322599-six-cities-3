@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, generatePath } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import { useAppDispatch } from '../../hooks/index';
+import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { AppRoute, AuthorizationStatus } from '../../const';
-import { fillOffers } from '../../store/action';
+import { fetchOffers } from '../../store/api-actions';
 import MainPage from '../../pages/main-page/main-page';
 import LoginPage from '../../pages/login-page/login-page';
 import FavoritesPage from '../../pages/favorites-page/favorites-page';
@@ -11,23 +11,20 @@ import OfferPage from '../../pages/offer-page/offer-page';
 import NotFoundPage from '../../pages/not-found-page/not-found-page';
 import PrivateRoute from '../private-route/private-route';
 import Layout from '../layout/layout';
-import { Offer } from '../../types/offers';
-import { Review } from '../../types/reviews';
+import Spinner from '../spinner/spinner';
+import { getIsLoading } from '../../store/selectors';
 
-type AppProps = {
-  offers: Offer[];
-  reviews: Review[];
-}
-
-function App({ offers, reviews }: AppProps): JSX.Element {
+function App(): JSX.Element {
   const dispatch = useAppDispatch();
+  const isLoading = useAppSelector(getIsLoading);
 
   useEffect(() => {
-    dispatch(fillOffers(offers));
-  }, [dispatch, offers]);
+    dispatch(fetchOffers());
+  }, [dispatch]);
 
   return (
     <HelmetProvider>
+      {isLoading && <Spinner />}
       <BrowserRouter>
         <Routes>
           <Route element={<Layout authorizationStatus={AuthorizationStatus.Auth} />}>
@@ -44,8 +41,8 @@ function App({ offers, reviews }: AppProps): JSX.Element {
               }
             />
             <Route
-              path={AppRoute.Offer}
-              element={<OfferPage offers={offers} reviews={reviews} />}
+              path={generatePath(AppRoute.Offer, { id: ':id' })}
+              element={<OfferPage />}
             />
           </Route>
           <Route path={AppRoute.Login} element={<LoginPage />} />
