@@ -16,11 +16,9 @@ function OfferPage(): JSX.Element {
 
   const currentOffer = offers.find((offer) => offer.id === id);
 
-
   if (!currentOffer) {
     return <NotFoundPage />;
   }
-
 
   const nearOffers = offers
     .filter((offer) => offer.id !== id && offer.city.name === currentOffer.city.name)

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, generatePath } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { AppRoute, AuthorizationStatus } from '../../const';
@@ -41,7 +41,7 @@ function App(): JSX.Element {
               }
             />
             <Route
-              path={`${AppRoute.Offer}/:id`}
+              path={generatePath(AppRoute.Offer, { id: ':id' })}
               element={<OfferPage />}
             />
           </Route>
