@@ -1,16 +1,18 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { changeCity, updateOfferFavoriteStatus, loadOffers } from './action';
+import { changeCity, updateOfferFavoriteStatus, loadOffers, setIsLoading } from './action';
 import { DEFAULT_CITY } from '../const';
-import type { Offer } from '../types/offers';
+import type { Offer, FavoriteData } from '../types/offers';
 
 export type State = {
   currentCityName: string;
   offers: Offer[];
+  isLoading: boolean;
 };
 
 const initialState: State = {
   currentCityName: DEFAULT_CITY,
-  offers: []
+  offers: [],
+  isLoading: false
 };
 
 const reducer = createReducer(initialState, (builder) => {
@@ -22,12 +24,15 @@ const reducer = createReducer(initialState, (builder) => {
       state.offers = action.payload;
     })
     .addCase(updateOfferFavoriteStatus, (state, action) => {
-      const { offerId, status } = action.payload;
-      const offerIndex = state.offers.findIndex((offer) => offer.id === offerId);
+      const payload: FavoriteData = action.payload;
+      const offerIndex = state.offers.findIndex((offer) => offer.id === payload.offerId);
 
       if (offerIndex !== -1) {
-        state.offers[offerIndex].isFavorite = status;
+        state.offers[offerIndex].isFavorite = payload.status;
       }
+    })
+    .addCase(setIsLoading, (state, action) => {
+      state.isLoading = action.payload;
     });
 });
 
