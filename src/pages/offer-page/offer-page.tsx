@@ -1,19 +1,30 @@
 import { Helmet } from 'react-helmet-async';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../../hooks';
 import Map from '../../components/map/map';
-import { Offer } from '../../types/offers';
-import { Review } from '../../types/reviews';
 import ReviewForm from '../../components/review-form/review-form';
 import ReviewsList from '../../components/reviews-list/reviews-list';
 import OfferList from '../../components/offer-list/offer-list';
+import { getOffers } from '../../store/selectors';
+import { AppRoute } from '../../const';
+import NotFoundPage from '../not-found-page/not-found-page';
 
-type OfferPageProps = {
-  offers: Offer[];
-  reviews: Review[];
-};
+function OfferPage(): JSX.Element {
+  const { id } = useParams();
+  const offers = useAppSelector(getOffers);
+  const navigate = useNavigate();
 
-function OfferPage({ offers, reviews }: OfferPageProps): JSX.Element {
-  const currentOffer = offers[0];
-  const nearOffers = offers.slice(1, 4);
+  const currentOffer = offers.find((offer) => offer.id === id);
+
+
+  if (!currentOffer) {
+    return <NotFoundPage />;
+  }
+
+
+  const nearOffers = offers
+    .filter((offer) => offer.id !== id && offer.city.name === currentOffer.city.name)
+    .slice(0, 3);
 
   return (
     <>
@@ -42,7 +53,11 @@ function OfferPage({ offers, reviews }: OfferPageProps): JSX.Element {
               )}
               <div className="offer__name-wrapper">
                 <h1 className="offer__name">{currentOffer.title}</h1>
-                <button className="offer__bookmark-button button" type="button">
+                <button
+                  className="offer__bookmark-button button"
+                  type="button"
+                  onClick={() => navigate(AppRoute.Favorites)}
+                >
                   <svg className="offer__bookmark-icon" width="31" height="33">
                     <use xlinkHref="#icon-bookmark" />
                   </svg>
@@ -85,7 +100,13 @@ function OfferPage({ offers, reviews }: OfferPageProps): JSX.Element {
                 <h2 className="offer__host-title">Meet the host</h2>
                 <div className="offer__host-user user">
                   <div className={`offer__avatar-wrapper ${currentOffer.host.isPro ? 'offer__avatar-wrapper--pro' : ''} user__avatar-wrapper`}>
-                    <img className="offer__avatar user__avatar" src={currentOffer.host.avatarUrl} width="74" height="74" alt="Host avatar" />
+                    <img
+                      className="offer__avatar user__avatar"
+                      src={currentOffer.host.avatarUrl}
+                      width="74"
+                      height="74"
+                      alt="Host avatar"
+                    />
                   </div>
                   <span className="offer__user-name">{currentOffer.host.name}</span>
                   {currentOffer.host.isPro && <span className="offer__user-status">Pro</span>}
@@ -96,8 +117,8 @@ function OfferPage({ offers, reviews }: OfferPageProps): JSX.Element {
               </div>
 
               <section className="offer__reviews reviews">
-                <h2 className="reviews__title">Reviews · <span className="reviews__amount">{reviews.length}</span></h2>
-                <ReviewsList reviews={reviews} />
+                <h2 className="reviews__title">Reviews · <span className="reviews__amount">0</span></h2>
+                <ReviewsList reviews={[]} />
                 <ReviewForm />
               </section>
             </div>
