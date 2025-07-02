@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, generatePath } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
-import { AppRoute, AuthorizationStatus } from '../../const';
+import { AppRoute } from '../../const';
 import { fetchOffers } from '../../store/api-actions';
 import MainPage from '../../pages/main-page/main-page';
 import LoginPage from '../../pages/login-page/login-page';
@@ -12,11 +12,12 @@ import NotFoundPage from '../../pages/not-found-page/not-found-page';
 import PrivateRoute from '../private-route/private-route';
 import Layout from '../layout/layout';
 import Spinner from '../spinner/spinner';
-import { getIsLoading } from '../../store/selectors';
+import { getIsLoading, getAuthorizationStatus } from '../../store/selectors';
 
 function App(): JSX.Element {
   const dispatch = useAppDispatch();
   const isLoading = useAppSelector(getIsLoading);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
 
   useEffect(() => {
     dispatch(fetchOffers());
@@ -27,7 +28,7 @@ function App(): JSX.Element {
       {isLoading && <Spinner />}
       <BrowserRouter>
         <Routes>
-          <Route element={<Layout authorizationStatus={AuthorizationStatus.Auth} />}>
+          <Route element={<Layout authorizationStatus={authorizationStatus} />}>
             <Route
               path={AppRoute.Root}
               element={<MainPage />}
@@ -35,7 +36,7 @@ function App(): JSX.Element {
             <Route
               path={AppRoute.Favorites}
               element={
-                <PrivateRoute authorizationStatus={AuthorizationStatus.NoAuth}>
+                <PrivateRoute authorizationStatus={authorizationStatus}>
                   <FavoritesPage />
                 </PrivateRoute>
               }

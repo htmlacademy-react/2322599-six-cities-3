@@ -1,18 +1,20 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { changeCity, updateOfferFavoriteStatus, loadOffers, setIsLoading } from './action';
-import { DEFAULT_CITY } from '../const';
+import { changeCity, updateOfferFavoriteStatus, loadOffers, setIsLoading, requireAuthorization } from './action';
+import { DEFAULT_CITY, AuthorizationStatus } from '../const';
 import type { Offer, FavoriteData } from '../types/offers';
 
 export type State = {
   currentCityName: string;
   offers: Offer[];
   isLoading: boolean;
+  authorizationStatus: AuthorizationStatus;
 };
 
 const initialState: State = {
   currentCityName: DEFAULT_CITY,
   offers: [],
-  isLoading: false
+  isLoading: false,
+  authorizationStatus: AuthorizationStatus.Unknown
 };
 
 const reducer = createReducer(initialState, (builder) => {
@@ -33,6 +35,9 @@ const reducer = createReducer(initialState, (builder) => {
     })
     .addCase(setIsLoading, (state, action) => {
       state.isLoading = action.payload;
+    })
+    .addCase(requireAuthorization, (state, action) => {
+      state.authorizationStatus = action.payload;
     });
 });
 
