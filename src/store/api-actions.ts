@@ -1,13 +1,24 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, State } from '../types/state';
 import { AxiosInstance } from 'axios';
-import { APIRoute, AuthorizationStatus } from '../const';
-import { requireAuthorization } from './action';
+import { APIRoute, AuthorizationStatus, TIMEOUT_SHOW_ERROR } from '../const';
+import { requireAuthorization, setError } from './action';
 import { saveToken, dropToken } from '../services/token';
 import { AuthData } from '../types/auth-data';
 import { UserData } from '../types/user-data';
 import { Offer } from '../types/offers';
 import { loadOffers, setIsLoading } from './action';
+import { store } from './index';
+
+export const clearErrorAction = createAsyncThunk(
+  'app/clearError',
+  () => {
+    setTimeout(
+      () => store.dispatch(setError(null)),
+      TIMEOUT_SHOW_ERROR
+    );
+  }
+);
 
 export const fetchOffers = createAsyncThunk<void, undefined, {
   dispatch: AppDispatch;
@@ -20,8 +31,9 @@ export const fetchOffers = createAsyncThunk<void, undefined, {
     try {
       const { data } = await api.get<Offer[]>(APIRoute.Offers);
       dispatch(loadOffers(data));
-    } catch {
-      // Ошибка игнорируется по требованию
+    } catch (error) {
+      dispatch(setError('Failed to load offers'));
+      dispatch(clearErrorAction());
     } finally {
       dispatch(setIsLoading(false));
     }
@@ -56,7 +68,8 @@ export const loginAction = createAsyncThunk<void, AuthData, {
       saveToken(data.token);
       dispatch(requireAuthorization(AuthorizationStatus.Auth));
     } catch (error) {
-      // Обработка ошибки авторизации
+      dispatch(setError('Failed to login'));
+      dispatch(clearErrorAction());
       dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
       throw error;
     }
