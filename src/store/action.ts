@@ -8,3 +8,4 @@ export const updateOfferFavoriteStatus = createAction<FavoriteData>('offers/upda
 export const setIsLoading = createAction<boolean>('app/setIsLoading');
 export const requireAuthorization = createAction<AuthorizationStatus>('user/requireAuthorization');
 export const setError = createAction<string | null>('app/setError');
+export const setOffersDataLoadingStatus = createAction<boolean>('data/setOffersDataLoadingStatus');
