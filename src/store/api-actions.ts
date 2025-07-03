@@ -86,8 +86,8 @@ export const logoutAction = createAsyncThunk<void, undefined, {
       await api.delete(APIRoute.Logout);
       dropToken();
       dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
-    } catch {
-      // Ошибка игнорируется
+    } catch (error) {
+      processErrorHandle('Failed to logout');
     }
   },
 );

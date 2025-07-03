@@ -1,16 +1,24 @@
-import Logo from '../../components/logo/logo';
-import { Helmet } from 'react-helmet-async';
-import { useRef, FormEvent } from 'react';
+import { useEffect, useRef, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '../../hooks';
+import { Helmet } from 'react-helmet-async';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 import { loginAction } from '../../store/api-actions';
-import { AppRoute } from '../../const';
+import { AppRoute, AuthorizationStatus } from '../../const';
+import { getAuthorizationStatus } from '../../store/selectors';
+import Logo from '../../components/logo/logo';
 
 function LoginPage(): JSX.Element {
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
+
+  useEffect(() => {
+    if (authorizationStatus === AuthorizationStatus.Auth) {
+      navigate(AppRoute.Root);
+    }
+  }, [authorizationStatus, navigate]);
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
