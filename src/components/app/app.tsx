@@ -13,9 +13,7 @@ import PrivateRoute from '../private-route/private-route';
 import Layout from '../layout/layout';
 import Spinner from '../spinner/spinner';
 import {
-  getIsLoading,
-  getAuthorizationStatus,
-  getIsOffersDataLoading
+  getIsLoading, getAuthorizationStatus, getIsOffersDataLoading
 } from '../../store/selectors';
 
 function App(): JSX.Element {
@@ -38,7 +36,7 @@ function App(): JSX.Element {
       {isLoading && <Spinner />}
       <BrowserRouter>
         <Routes>
-          <Route element={<Layout authorizationStatus={authorizationStatus} />}>
+          <Route element={<Layout />}>
             <Route
               path={AppRoute.Root}
               element={<MainPage />}

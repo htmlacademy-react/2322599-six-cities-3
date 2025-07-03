@@ -2,12 +2,11 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, State } from '../types/state';
 import { AxiosInstance } from 'axios';
 import { APIRoute, AuthorizationStatus, TIMEOUT_SHOW_ERROR } from '../const';
-import { requireAuthorization, setError, setOffersDataLoadingStatus } from './action';
+import { requireAuthorization, setError, setOffersDataLoadingStatus, loadOffers, setUserData } from './action';
 import { saveToken, dropToken } from '../services/token';
 import { AuthData } from '../types/auth-data';
 import { UserData } from '../types/user-data';
 import { Offer } from '../types/offers';
-import { loadOffers } from './action';
 import { store } from './index';
 import { processErrorHandle } from '../services/process-error-handle';
 
@@ -48,10 +47,12 @@ export const checkAuthAction = createAsyncThunk<void, undefined, {
   'user/checkAuth',
   async (_arg, { dispatch, extra: api }) => {
     try {
-      await api.get(APIRoute.Login);
+      const { data } = await api.get<UserData>(APIRoute.Login);
       dispatch(requireAuthorization(AuthorizationStatus.Auth));
+      dispatch(setUserData(data));
     } catch {
       dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
+      dispatch(setUserData(null));
     }
   },
 );
@@ -67,9 +68,11 @@ export const loginAction = createAsyncThunk<void, AuthData, {
       const { data } = await api.post<UserData>(APIRoute.Login, { email, password });
       saveToken(data.token);
       dispatch(requireAuthorization(AuthorizationStatus.Auth));
+      dispatch(setUserData(data));
     } catch (error) {
       processErrorHandle('Failed to login');
       dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
+      dispatch(setUserData(null));
       throw error;
     }
   },
@@ -86,6 +89,7 @@ export const logoutAction = createAsyncThunk<void, undefined, {
       await api.delete(APIRoute.Logout);
       dropToken();
       dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
+      dispatch(setUserData(null));
     } catch (error) {
       processErrorHandle('Failed to logout');
     }
