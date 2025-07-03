@@ -1,24 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, State } from '../types/state';
 import { AxiosInstance } from 'axios';
-import { APIRoute, AuthorizationStatus, TIMEOUT_SHOW_ERROR } from '../const';
-import { requireAuthorization, setError, setOffersDataLoadingStatus, loadOffers, setUserData } from './action';
+import { APIRoute, AuthorizationStatus } from '../const';
+import { requireAuthorization, setOffersDataLoadingStatus, loadOffers, setUserData } from './action';
 import { saveToken, dropToken } from '../services/token';
 import { AuthData } from '../types/auth-data';
 import { UserData } from '../types/user-data';
 import { Offer } from '../types/offers';
-import { store } from './index';
-import { processErrorHandle } from '../services/process-error-handle';
-
-export const clearErrorAction = createAsyncThunk(
-  'app/clearError',
-  () => {
-    setTimeout(
-      () => store.dispatch(setError(null)),
-      TIMEOUT_SHOW_ERROR
-    );
-  }
-);
+import { toast } from 'react-toastify';
 
 export const fetchOffers = createAsyncThunk<void, undefined, {
   dispatch: AppDispatch;
@@ -32,7 +21,7 @@ export const fetchOffers = createAsyncThunk<void, undefined, {
       const { data } = await api.get<Offer[]>(APIRoute.Offers);
       dispatch(loadOffers(data));
     } catch (error) {
-      processErrorHandle('Failed to load offers');
+      toast.error('Failed to load offers');
     } finally {
       dispatch(setOffersDataLoadingStatus(false));
     }
@@ -70,7 +59,7 @@ export const loginAction = createAsyncThunk<void, AuthData, {
       dispatch(requireAuthorization(AuthorizationStatus.Auth));
       dispatch(setUserData(data));
     } catch (error) {
-      processErrorHandle('Failed to login');
+      toast.error('Failed to login');
       dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
       dispatch(setUserData(null));
       throw error;
@@ -91,7 +80,7 @@ export const logoutAction = createAsyncThunk<void, undefined, {
       dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
       dispatch(setUserData(null));
     } catch (error) {
-      processErrorHandle('Failed to logout');
+      toast.error('Failed to logout');
     }
   },
 );

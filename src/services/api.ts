@@ -1,9 +1,9 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosError } from 'axios';
 import { StatusCodes } from 'http-status-codes';
+import { toast } from 'react-toastify';
 import { getToken } from './token';
 import { store } from '../store';
 import { requireAuthorization } from '../store/action';
-import { processErrorHandle } from './process-error-handle';
 import { AuthorizationStatus } from '../const';
 
 const BACKEND_URL = 'https://15.design.htmlacademy.pro/six-cities';
@@ -44,7 +44,7 @@ export const createAPI = (): AxiosInstance => {
     (response) => response,
     (error: AxiosError<ErrorResponse>) => {
       if (!error.response) {
-        processErrorHandle(error.message || 'Network error');
+        toast.error(error.message || 'Network error');
         return Promise.reject(error);
       }
 
@@ -58,7 +58,7 @@ export const createAPI = (): AxiosInstance => {
         const errorMessage = error.response.data?.message ||
           error.response.data?.error ||
           `Error ${status}: ${error.message}`;
-        processErrorHandle(errorMessage);
+        toast.error(errorMessage);
       }
 
       return Promise.reject(error);

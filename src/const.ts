@@ -19,5 +19,3 @@ export enum APIRoute {
   Offers = '/offers',
   User = '/user'
 }
-
-export const TIMEOUT_SHOW_ERROR = 2000;
