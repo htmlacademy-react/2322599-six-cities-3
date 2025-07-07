@@ -1,4 +1,5 @@
 import { State } from './reducer';
+import { createSelector } from '@reduxjs/toolkit';
 
 export const getCurrentCityName = (state: State) => state.currentCityName;
 export const getOffers = (state: State) => state.offers;
@@ -7,9 +8,7 @@ export const getAuthorizationStatus = (state: State) => state.authorizationStatu
 export const getIsOffersDataLoading = (state: State) => state.isOffersDataLoading;
 export const getUserData = (state: State) => state.userData;
 
-export const getCurrentCityOffers = (state: State) => {
-  const currentCityName = getCurrentCityName(state);
-  const offers = getOffers(state);
-
-  return offers.filter((offer) => offer.city.name === currentCityName);
-};
+export const getCurrentCityOffers = createSelector(
+  [getCurrentCityName, getOffers],
+  (city, offers) => offers.filter((offer) => offer.city.name === city)
+);

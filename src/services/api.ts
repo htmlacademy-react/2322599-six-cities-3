@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { getToken } from './token';
 import { store } from '../store';
 import { requireAuthorization } from '../store/action';
-import { AuthorizationStatus } from '../const';
+import { AuthorizationStatus, APIRoute } from '../const';
 
 const BACKEND_URL = 'https://15.design.htmlacademy.pro/six-cities';
 const REQUEST_TIMEOUT = 5000;
@@ -33,7 +33,7 @@ export const createAPI = (): AxiosInstance => {
       const token = getToken();
 
       if (token && config.headers) {
-        config.headers['x-token'] = token;
+        config.headers['X-Token'] = token;
       }
 
       return config;
@@ -49,6 +49,11 @@ export const createAPI = (): AxiosInstance => {
       }
 
       const status = error.response.status;
+      const url = error.config?.url;
+
+      if (status === 401 && url === APIRoute.Login) {
+        return Promise.reject(error);
+      }
 
       if (status === 401) {
         store.dispatch(requireAuthorization(AuthorizationStatus.NoAuth));

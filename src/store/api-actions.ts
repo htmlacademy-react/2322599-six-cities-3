@@ -2,11 +2,11 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, State } from '../types/state';
 import { AxiosInstance } from 'axios';
 import { APIRoute, AuthorizationStatus } from '../const';
-import { requireAuthorization, setOffersDataLoadingStatus, loadOffers, setUserData } from './action';
+import { requireAuthorization, setOffersDataLoadingStatus, loadOffers, setUserData, updateOfferFavoriteStatus } from './action';
 import { saveToken, dropToken } from '../services/token';
 import { AuthData } from '../types/auth-data';
 import { UserData } from '../types/user-data';
-import { Offer } from '../types/offers';
+import { Offer, FavoriteData } from '../types/offers';
 import { toast } from 'react-toastify';
 
 export const fetchOffers = createAsyncThunk<void, undefined, {
@@ -39,7 +39,7 @@ export const checkAuthAction = createAsyncThunk<void, undefined, {
       const { data } = await api.get<UserData>(APIRoute.Login);
       dispatch(requireAuthorization(AuthorizationStatus.Auth));
       dispatch(setUserData(data));
-    } catch {
+    } catch (error) {
       dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
       dispatch(setUserData(null));
     }
@@ -81,6 +81,22 @@ export const logoutAction = createAsyncThunk<void, undefined, {
       dispatch(setUserData(null));
     } catch (error) {
       toast.error('Failed to logout');
+    }
+  },
+);
+
+export const changeFavoriteStatus = createAsyncThunk<void, FavoriteData, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'data/changeFavoriteStatus',
+  async ({ offerId, status }, { dispatch, extra: api }) => {
+    try {
+      await api.post(`${APIRoute.Favorite}/${offerId}/${status ? 1 : 0}`);
+      dispatch(updateOfferFavoriteStatus({ offerId, status }));
+    } catch (error) {
+      toast.error('Failed to update favorite status');
     }
   },
 );

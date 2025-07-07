@@ -1,6 +1,6 @@
 import { Link, generatePath } from 'react-router-dom';
 import { useAppDispatch } from '../../hooks';
-import { updateOfferFavoriteStatus } from '../../store/action';
+import { changeFavoriteStatus } from '../../store/api-actions';
 import { Offer, CardListType } from '../../types/offers';
 import { AppRoute } from '../../const';
 import './offer-card.css';
@@ -35,7 +35,7 @@ function OfferCard({
 
   const handleFavoriteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    dispatch(updateOfferFavoriteStatus({
+    dispatch(changeFavoriteStatus({
       offerId: id,
       status: !isFavorite
     }));
