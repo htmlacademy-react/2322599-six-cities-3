@@ -1,4 +1,4 @@
-import { useState, FormEvent, ChangeEvent } from 'react';
+import { useState, FormEvent, ChangeEvent, Fragment } from 'react';
 
 const RATING_VALUES = [5, 4, 3, 2, 1];
 
@@ -25,7 +25,7 @@ function ReviewForm(): JSX.Element {
       <label className="reviews__label form__label" htmlFor="review">Your review</label>
       <div className="reviews__rating-form form__rating">
         {RATING_VALUES.map((rating) => (
-          <>
+          <Fragment key={rating}>
             <input
               className="form__rating-input visually-hidden"
               name="rating"
@@ -40,7 +40,7 @@ function ReviewForm(): JSX.Element {
                 <use xlinkHref="#icon-star"></use>
               </svg>
             </label>
-          </>
+          </Fragment>
         ))}
       </div>
       <textarea

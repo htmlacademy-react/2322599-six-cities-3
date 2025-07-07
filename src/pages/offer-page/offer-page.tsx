@@ -1,24 +1,57 @@
 import { Helmet } from 'react-helmet-async';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../../hooks';
+import { useParams } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 import Map from '../../components/map/map';
 import ReviewForm from '../../components/review-form/review-form';
 import ReviewsList from '../../components/reviews-list/reviews-list';
 import OfferList from '../../components/offer-list/offer-list';
 import { getOffers } from '../../store/selectors';
-import { AppRoute } from '../../const';
 import NotFoundPage from '../not-found-page/not-found-page';
+import Spinner from '../../components/spinner/spinner';
+import { useEffect, useState } from 'react';
+import { fetchOffers } from '../../store/api-actions';
+import { changeFavoriteStatus } from '../../store/api-actions';
+import type { Offer } from '../../types/offers';
 
 function OfferPage(): JSX.Element {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+  const dispatch = useAppDispatch();
   const offers = useAppSelector(getOffers);
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentOffer, setCurrentOffer] = useState<Offer | null>(null);
 
-  const currentOffer = offers.find((offer) => offer.id === id);
+  useEffect(() => {
+    if (offers.length > 0 && id) {
+      const foundOffer = offers.find((offer) => offer.id === id) || null;
+      setCurrentOffer(foundOffer);
+      setIsLoading(false);
+      return;
+    }
 
-  if (!currentOffer) {
+    dispatch(fetchOffers())
+      .then(() => {
+        if (id) {
+          const foundOffer = offers.find((offer) => offer.id === id) || null;
+          setCurrentOffer(foundOffer);
+        }
+      })
+      .finally(() => setIsLoading(false));
+  }, [dispatch, id, offers]);
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (!currentOffer || !id) {
     return <NotFoundPage />;
   }
+
+  const handleFavoriteClick = () => {
+    dispatch(changeFavoriteStatus({
+      offerId: id,
+      status: !currentOffer.isFavorite
+    }));
+  };
 
   const nearOffers = offers
     .filter((offer) => offer.id !== id && offer.city.name === currentOffer.city.name)
@@ -34,7 +67,7 @@ function OfferPage(): JSX.Element {
         <section className="offer">
           <div className="offer__gallery-container container">
             <div className="offer__gallery">
-              {currentOffer.images.slice(0, 6).map((image) => (
+              {currentOffer.images?.slice(0, 6).map((image) => (
                 <div key={image} className="offer__image-wrapper">
                   <img className="offer__image" src={image} alt="Place image" />
                 </div>
@@ -52,9 +85,9 @@ function OfferPage(): JSX.Element {
               <div className="offer__name-wrapper">
                 <h1 className="offer__name">{currentOffer.title}</h1>
                 <button
-                  className="offer__bookmark-button button"
+                  className={`offer__bookmark-button button ${currentOffer.isFavorite ? 'offer__bookmark-button--active' : ''}`}
                   type="button"
-                  onClick={() => navigate(AppRoute.Favorites)}
+                  onClick={handleFavoriteClick}
                 >
                   <svg className="offer__bookmark-icon" width="31" height="33">
                     <use xlinkHref="#icon-bookmark" />
@@ -87,7 +120,7 @@ function OfferPage(): JSX.Element {
               <div className="offer__inside">
                 <h2 className="offer__inside-title">What&apos;s inside</h2>
                 <ul className="offer__inside-list">
-                  {currentOffer.goods.map((good) => (
+                  {currentOffer.goods?.map((good) => (
                     <li key={good} className="offer__inside-item">
                       {good}
                     </li>
@@ -97,17 +130,17 @@ function OfferPage(): JSX.Element {
               <div className="offer__host">
                 <h2 className="offer__host-title">Meet the host</h2>
                 <div className="offer__host-user user">
-                  <div className={`offer__avatar-wrapper ${currentOffer.host.isPro ? 'offer__avatar-wrapper--pro' : ''} user__avatar-wrapper`}>
+                  <div className={`offer__avatar-wrapper ${currentOffer.host?.isPro ? 'offer__avatar-wrapper--pro' : ''} user__avatar-wrapper`}>
                     <img
                       className="offer__avatar user__avatar"
-                      src={currentOffer.host.avatarUrl}
+                      src={currentOffer.host?.avatarUrl || ''}
                       width="74"
                       height="74"
                       alt="Host avatar"
                     />
                   </div>
-                  <span className="offer__user-name">{currentOffer.host.name}</span>
-                  {currentOffer.host.isPro && <span className="offer__user-status">Pro</span>}
+                  <span className="offer__user-name">{currentOffer.host?.name || ''}</span>
+                  {currentOffer.host?.isPro && <span className="offer__user-status">Pro</span>}
                 </div>
                 <div className="offer__description">
                   <p className="offer__text">{currentOffer.description}</p>
