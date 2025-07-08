@@ -1,12 +1,19 @@
 import { useState, FormEvent, ChangeEvent, Fragment } from 'react';
 
+const MIN_COMMENT_LENGTH = 50;
+const MAX_COMMENT_LENGTH = 300;
 const RATING_VALUES = [5, 4, 3, 2, 1];
 
-function ReviewForm(): JSX.Element {
+type ReviewFormProps = {
+  onSubmit: (comment: string, rating: number) => void;
+};
+
+function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
   const [formData, setFormData] = useState({
     rating: '0',
     review: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleRatingChange = (evt: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, rating: evt.target.value });
@@ -18,7 +25,21 @@ function ReviewForm(): JSX.Element {
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
+    setIsSubmitting(true);
+
+    onSubmit(formData.review, Number(formData.rating));
+
+    setFormData({
+      rating: '0',
+      review: ''
+    });
+    setIsSubmitting(false);
   };
+
+  const isValid =
+    formData.review.length >= MIN_COMMENT_LENGTH &&
+    formData.review.length <= MAX_COMMENT_LENGTH &&
+    formData.rating !== '0';
 
   return (
     <form className="reviews__form form" action="#" method="post" onSubmit={handleSubmit}>
@@ -34,6 +55,7 @@ function ReviewForm(): JSX.Element {
               type="radio"
               checked={formData.rating === String(rating)}
               onChange={handleRatingChange}
+              disabled={isSubmitting}
             />
             <label htmlFor={`${rating}-stars`} className="reviews__rating-label form__rating-label" title="perfect">
               <svg className="form__star-image" width="37" height="33">
@@ -50,6 +72,7 @@ function ReviewForm(): JSX.Element {
         placeholder="Tell how was your stay, what you like and what can be improved"
         value={formData.review}
         onChange={handleReviewChange}
+        disabled={isSubmitting}
       />
       <div className="reviews__button-wrapper">
         <p className="reviews__help">
@@ -58,9 +81,9 @@ function ReviewForm(): JSX.Element {
         <button
           className="reviews__submit form__submit button"
           type="submit"
-          disabled={formData.review.length < 50 || formData.rating === '0'}
+          disabled={!isValid || isSubmitting}
         >
-          Submit
+          {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>
       </div>
     </form>

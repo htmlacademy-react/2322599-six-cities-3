@@ -5,12 +5,11 @@ import Map from '../../components/map/map';
 import ReviewForm from '../../components/review-form/review-form';
 import ReviewsList from '../../components/reviews-list/reviews-list';
 import OfferList from '../../components/offer-list/offer-list';
-import { getOffers } from '../../store/selectors';
+import { getOffers, getComments, getIsCommentsLoading } from '../../store/selectors';
 import NotFoundPage from '../not-found-page/not-found-page';
 import Spinner from '../../components/spinner/spinner';
 import { useEffect, useState } from 'react';
-import { fetchOffers } from '../../store/api-actions';
-import { changeFavoriteStatus } from '../../store/api-actions';
+import { changeFavoriteStatus, fetchOffers, fetchCommentsAction, postCommentAction } from '../../store/api-actions';
 import type { Offer } from '../../types/offers';
 
 function OfferPage(): JSX.Element {
@@ -19,12 +18,15 @@ function OfferPage(): JSX.Element {
   const offers = useAppSelector(getOffers);
   const [isLoading, setIsLoading] = useState(true);
   const [currentOffer, setCurrentOffer] = useState<Offer | null>(null);
+  const comments = useAppSelector(getComments);
+  const isCommentsLoading = useAppSelector(getIsCommentsLoading);
 
   useEffect(() => {
     if (offers.length > 0 && id) {
       const foundOffer = offers.find((offer) => offer.id === id) || null;
       setCurrentOffer(foundOffer);
       setIsLoading(false);
+      dispatch(fetchCommentsAction(id));
       return;
     }
 
@@ -33,6 +35,7 @@ function OfferPage(): JSX.Element {
         if (id) {
           const foundOffer = offers.find((offer) => offer.id === id) || null;
           setCurrentOffer(foundOffer);
+          dispatch(fetchCommentsAction(id));
         }
       })
       .finally(() => setIsLoading(false));
@@ -56,6 +59,12 @@ function OfferPage(): JSX.Element {
   const nearOffers = offers
     .filter((offer) => offer.id !== id && offer.city.name === currentOffer.city.name)
     .slice(0, 3);
+
+  const handleReviewSubmit = (comment: string, rating: number) => {
+    if (id) {
+      dispatch(postCommentAction({ offerId: id, comment, rating }));
+    }
+  };
 
   return (
     <>
@@ -148,9 +157,11 @@ function OfferPage(): JSX.Element {
               </div>
 
               <section className="offer__reviews reviews">
-                <h2 className="reviews__title">Reviews · <span className="reviews__amount">0</span></h2>
-                <ReviewsList reviews={[]} />
-                <ReviewForm />
+                <h2 className="reviews__title">
+                  Reviews · <span className="reviews__amount">{comments.length}</span>
+                </h2>
+                {!isCommentsLoading && <ReviewsList reviews={comments} />}
+                <ReviewForm onSubmit={handleReviewSubmit} />
               </section>
             </div>
           </div>

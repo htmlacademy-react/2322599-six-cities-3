@@ -1,8 +1,9 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { changeCity, updateOfferFavoriteStatus, loadOffers, setIsLoading, requireAuthorization, setOffersDataLoadingStatus, setUserData } from './action';
+import { changeCity, updateOfferFavoriteStatus, loadOffers, setIsLoading, requireAuthorization, setOffersDataLoadingStatus, setUserData, setComments, setCommentsLoadingStatus } from './action';
 import { DEFAULT_CITY, AuthorizationStatus } from '../const';
 import type { Offer, FavoriteData } from '../types/offers';
 import type { UserData } from '../types/user-data';
+import type { Review } from '../types/reviews';
 
 export type State = {
   currentCityName: string;
@@ -11,6 +12,8 @@ export type State = {
   authorizationStatus: AuthorizationStatus;
   isOffersDataLoading: boolean;
   userData: UserData | null;
+  comments: Review[];
+  isCommentsLoading: boolean;
 };
 
 const initialState: State = {
@@ -19,7 +22,9 @@ const initialState: State = {
   isLoading: false,
   authorizationStatus: AuthorizationStatus.Unknown,
   isOffersDataLoading: false,
-  userData: null
+  userData: null,
+  comments: [],
+  isCommentsLoading: false
 };
 
 const reducer = createReducer(initialState, (builder) => {
@@ -49,6 +54,12 @@ const reducer = createReducer(initialState, (builder) => {
     })
     .addCase(setUserData, (state, action) => {
       state.userData = action.payload;
+    })
+    .addCase(setComments, (state, action) => {
+      state.comments = action.payload;
+    })
+    .addCase(setCommentsLoadingStatus, (state, action) => {
+      state.isCommentsLoading = action.payload;
     });
 });
 
