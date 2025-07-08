@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { changeCity, updateOfferFavoriteStatus, loadOffers, setIsLoading, requireAuthorization, setOffersDataLoadingStatus, setUserData, setComments, setCommentsLoadingStatus } from './action';
+import { changeCity, updateOfferFavoriteStatus, loadOffers, setIsLoading, requireAuthorization, setOffersDataLoadingStatus, setUserData, setComments, setCommentsLoadingStatus, setCurrentOffer, setNearOffers, setOfferLoadingStatus } from './action';
 import { DEFAULT_CITY, AuthorizationStatus } from '../const';
 import type { Offer, FavoriteData } from '../types/offers';
 import type { UserData } from '../types/user-data';
@@ -14,6 +14,9 @@ export type State = {
   userData: UserData | null;
   comments: Review[];
   isCommentsLoading: boolean;
+  currentOffer: Offer | null;
+  nearOffers: Offer[];
+  isOfferLoading: boolean;
 };
 
 const initialState: State = {
@@ -24,7 +27,10 @@ const initialState: State = {
   isOffersDataLoading: false,
   userData: null,
   comments: [],
-  isCommentsLoading: false
+  isCommentsLoading: false,
+  currentOffer: null,
+  nearOffers: [],
+  isOfferLoading: false
 };
 
 const reducer = createReducer(initialState, (builder) => {
@@ -60,6 +66,15 @@ const reducer = createReducer(initialState, (builder) => {
     })
     .addCase(setCommentsLoadingStatus, (state, action) => {
       state.isCommentsLoading = action.payload;
+    })
+    .addCase(setCurrentOffer, (state, action) => {
+      state.currentOffer = action.payload;
+    })
+    .addCase(setNearOffers, (state, action) => {
+      state.nearOffers = action.payload;
+    })
+    .addCase(setOfferLoadingStatus, (state, action) => {
+      state.isOfferLoading = action.payload;
     });
 });
 

@@ -5,43 +5,38 @@ import Map from '../../components/map/map';
 import ReviewForm from '../../components/review-form/review-form';
 import ReviewsList from '../../components/reviews-list/reviews-list';
 import OfferList from '../../components/offer-list/offer-list';
-import { getOffers, getComments, getIsCommentsLoading } from '../../store/selectors';
+import { getComments, getIsCommentsLoading, getCurrentOffer, getNearOffers, getIsOfferLoading } from '../../store/selectors';
 import NotFoundPage from '../not-found-page/not-found-page';
 import Spinner from '../../components/spinner/spinner';
-import { useEffect, useState } from 'react';
-import { changeFavoriteStatus, fetchOffers, fetchCommentsAction, postCommentAction } from '../../store/api-actions';
-import type { Offer } from '../../types/offers';
+import { useEffect } from 'react';
+import { changeFavoriteStatus, fetchCommentsAction, postCommentAction, fetchOfferAction, fetchNearOffersAction } from '../../store/api-actions';
+import { setCurrentOffer, setNearOffers, setComments } from '../../store/action';
 
 function OfferPage(): JSX.Element {
   const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
-  const offers = useAppSelector(getOffers);
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentOffer, setCurrentOffer] = useState<Offer | null>(null);
+
+  const currentOffer = useAppSelector(getCurrentOffer);
+  const nearOffers = useAppSelector(getNearOffers);
   const comments = useAppSelector(getComments);
   const isCommentsLoading = useAppSelector(getIsCommentsLoading);
+  const isOfferLoading = useAppSelector(getIsOfferLoading);
 
   useEffect(() => {
-    if (offers.length > 0 && id) {
-      const foundOffer = offers.find((offer) => offer.id === id) || null;
-      setCurrentOffer(foundOffer);
-      setIsLoading(false);
+    if (id) {
+      dispatch(fetchOfferAction(id));
+      dispatch(fetchNearOffersAction(id));
       dispatch(fetchCommentsAction(id));
-      return;
     }
 
-    dispatch(fetchOffers())
-      .then(() => {
-        if (id) {
-          const foundOffer = offers.find((offer) => offer.id === id) || null;
-          setCurrentOffer(foundOffer);
-          dispatch(fetchCommentsAction(id));
-        }
-      })
-      .finally(() => setIsLoading(false));
-  }, [dispatch, id, offers]);
+    return () => {
+      dispatch(setCurrentOffer(null));
+      dispatch(setNearOffers([]));
+      dispatch(setComments([]));
+    };
+  }, [dispatch, id]);
 
-  if (isLoading) {
+  if (isOfferLoading) {
     return <Spinner />;
   }
 
@@ -56,14 +51,8 @@ function OfferPage(): JSX.Element {
     }));
   };
 
-  const nearOffers = offers
-    .filter((offer) => offer.id !== id && offer.city.name === currentOffer.city.name)
-    .slice(0, 3);
-
   const handleReviewSubmit = (comment: string, rating: number) => {
-    if (id) {
-      dispatch(postCommentAction({ offerId: id, comment, rating }));
-    }
+    dispatch(postCommentAction({ offerId: id, comment, rating }));
   };
 
   return (

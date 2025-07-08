@@ -13,3 +13,6 @@ export const setOffersDataLoadingStatus = createAction<boolean>('data/setOffersD
 export const setUserData = createAction<UserData | null>('user/setUserData');
 export const setComments = createAction<Review[]>('data/setComments');
 export const setCommentsLoadingStatus = createAction<boolean>('data/setCommentsLoadingStatus');
+export const setCurrentOffer = createAction<Offer | null>('data/setCurrentOffer');
+export const setNearOffers = createAction<Offer[]>('data/setNearOffers');
+export const setOfferLoadingStatus = createAction<boolean>('data/setOfferLoadingStatus');

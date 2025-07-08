@@ -13,3 +13,6 @@ export const getCurrentCityOffers = createSelector(
 );
 export const getComments = (state: State) => state.comments;
 export const getIsCommentsLoading = (state: State) => state.isCommentsLoading;
+export const getCurrentOffer = (state: State) => state.currentOffer;
+export const getNearOffers = (state: State) => state.nearOffers;
+export const getIsOfferLoading = (state: State) => state.isOfferLoading;
