@@ -2,12 +2,13 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, State } from '../types/state';
 import { AxiosInstance } from 'axios';
 import { APIRoute, AuthorizationStatus } from '../const';
-import { requireAuthorization, setOffersDataLoadingStatus, loadOffers, setUserData, updateOfferFavoriteStatus } from './action';
+import { requireAuthorization, setOffersDataLoadingStatus, loadOffers, setUserData, updateOfferFavoriteStatus, setComments, setCommentsLoadingStatus, setCurrentOffer, setNearOffers, setOfferLoadingStatus } from './action';
 import { saveToken, dropToken } from '../services/token';
 import { AuthData } from '../types/auth-data';
 import { UserData } from '../types/user-data';
 import { Offer, FavoriteData } from '../types/offers';
 import { toast } from 'react-toastify';
+import { Review } from '../types/reviews';
 
 export const fetchOffers = createAsyncThunk<void, undefined, {
   dispatch: AppDispatch;
@@ -99,4 +100,76 @@ export const changeFavoriteStatus = createAsyncThunk<void, FavoriteData, {
       toast.error('Failed to update favorite status');
     }
   },
+);
+
+export const fetchCommentsAction = createAsyncThunk<void, string, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'data/fetchComments',
+  async (offerId, { dispatch, extra: api }) => {
+    dispatch(setCommentsLoadingStatus(true));
+    try {
+      const { data } = await api.get<Review[]>(`${APIRoute.Comments}/${offerId}`);
+      dispatch(setComments(data));
+    } catch (error) {
+      toast.error('Failed to load comments');
+    } finally {
+      dispatch(setCommentsLoadingStatus(false));
+    }
+  }
+);
+
+export const postCommentAction = createAsyncThunk<void, { offerId: string; comment: string; rating: number }, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'data/postComment',
+  async ({ offerId, comment, rating }, { dispatch, extra: api }) => {
+    try {
+      await api.post(`${APIRoute.Comments}/${offerId}`, { comment, rating });
+      dispatch(fetchCommentsAction(offerId));
+    } catch (error) {
+      toast.error('Failed to post comment');
+      throw error;
+    }
+  }
+);
+
+export const fetchOfferAction = createAsyncThunk<void, string, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'data/fetchOffer',
+  async (offerId, { dispatch, extra: api }) => {
+    dispatch(setOfferLoadingStatus(true));
+    try {
+      const { data } = await api.get<Offer>(`${APIRoute.Offers}/${offerId}`);
+      dispatch(setCurrentOffer(data));
+    } catch (error) {
+      toast.error('Failed to load offer');
+      dispatch(setCurrentOffer(null));
+    } finally {
+      dispatch(setOfferLoadingStatus(false));
+    }
+  }
+);
+
+export const fetchNearOffersAction = createAsyncThunk<void, string, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'data/fetchNearOffers',
+  async (offerId, { dispatch, extra: api }) => {
+    try {
+      const { data } = await api.get<Offer[]>(`${APIRoute.Offers}/${offerId}/nearby`);
+      dispatch(setNearOffers(data));
+    } catch (error) {
+      toast.error('Failed to load near offers');
+    }
+  }
 );

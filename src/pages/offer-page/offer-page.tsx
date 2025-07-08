@@ -5,40 +5,41 @@ import Map from '../../components/map/map';
 import ReviewForm from '../../components/review-form/review-form';
 import ReviewsList from '../../components/reviews-list/reviews-list';
 import OfferList from '../../components/offer-list/offer-list';
-import { getOffers } from '../../store/selectors';
+import { getComments, getIsCommentsLoading, getCurrentOffer, getNearOffers, getIsOfferLoading, getAuthorizationStatus } from '../../store/selectors';
 import NotFoundPage from '../not-found-page/not-found-page';
 import Spinner from '../../components/spinner/spinner';
-import { useEffect, useState } from 'react';
-import { fetchOffers } from '../../store/api-actions';
-import { changeFavoriteStatus } from '../../store/api-actions';
-import type { Offer } from '../../types/offers';
+import { useEffect } from 'react';
+import { changeFavoriteStatus, fetchCommentsAction, postCommentAction, fetchOfferAction, fetchNearOffersAction } from '../../store/api-actions';
+import { setCurrentOffer, setNearOffers, setComments } from '../../store/action';
+import { AuthorizationStatus } from '../../const';
+import { toast } from 'react-toastify';
 
 function OfferPage(): JSX.Element {
   const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
-  const offers = useAppSelector(getOffers);
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentOffer, setCurrentOffer] = useState<Offer | null>(null);
+
+  const currentOffer = useAppSelector(getCurrentOffer);
+  const nearOffers = useAppSelector(getNearOffers);
+  const comments = useAppSelector(getComments);
+  const isCommentsLoading = useAppSelector(getIsCommentsLoading);
+  const isOfferLoading = useAppSelector(getIsOfferLoading);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
 
   useEffect(() => {
-    if (offers.length > 0 && id) {
-      const foundOffer = offers.find((offer) => offer.id === id) || null;
-      setCurrentOffer(foundOffer);
-      setIsLoading(false);
-      return;
+    if (id) {
+      dispatch(fetchOfferAction(id));
+      dispatch(fetchNearOffersAction(id));
+      dispatch(fetchCommentsAction(id));
     }
 
-    dispatch(fetchOffers())
-      .then(() => {
-        if (id) {
-          const foundOffer = offers.find((offer) => offer.id === id) || null;
-          setCurrentOffer(foundOffer);
-        }
-      })
-      .finally(() => setIsLoading(false));
-  }, [dispatch, id, offers]);
+    return () => {
+      dispatch(setCurrentOffer(null));
+      dispatch(setNearOffers([]));
+      dispatch(setComments([]));
+    };
+  }, [dispatch, id]);
 
-  if (isLoading) {
+  if (isOfferLoading) {
     return <Spinner />;
   }
 
@@ -53,9 +54,16 @@ function OfferPage(): JSX.Element {
     }));
   };
 
-  const nearOffers = offers
-    .filter((offer) => offer.id !== id && offer.city.name === currentOffer.city.name)
-    .slice(0, 3);
+  const handleReviewSubmit = async (comment: string, rating: number) => {
+    try {
+      await dispatch(postCommentAction({ offerId: id, comment, rating })).unwrap();
+      toast.success('Comment successfully posted!');
+    } catch {
+      toast.error('Failed to post comment');
+    }
+  };
+
+  const isAuth = authorizationStatus === AuthorizationStatus.Auth;
 
   return (
     <>
@@ -148,9 +156,11 @@ function OfferPage(): JSX.Element {
               </div>
 
               <section className="offer__reviews reviews">
-                <h2 className="reviews__title">Reviews · <span className="reviews__amount">0</span></h2>
-                <ReviewsList reviews={[]} />
-                <ReviewForm />
+                <h2 className="reviews__title">
+                  Reviews · <span className="reviews__amount">{comments.length}</span>
+                </h2>
+                {!isCommentsLoading && <ReviewsList reviews={comments} />}
+                {isAuth && <ReviewForm onSubmit={handleReviewSubmit} />}
               </section>
             </div>
           </div>
