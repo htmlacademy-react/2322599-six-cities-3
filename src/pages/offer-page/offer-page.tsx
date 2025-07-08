@@ -5,12 +5,13 @@ import Map from '../../components/map/map';
 import ReviewForm from '../../components/review-form/review-form';
 import ReviewsList from '../../components/reviews-list/reviews-list';
 import OfferList from '../../components/offer-list/offer-list';
-import { getComments, getIsCommentsLoading, getCurrentOffer, getNearOffers, getIsOfferLoading } from '../../store/selectors';
+import { getComments, getIsCommentsLoading, getCurrentOffer, getNearOffers, getIsOfferLoading, getAuthorizationStatus } from '../../store/selectors';
 import NotFoundPage from '../not-found-page/not-found-page';
 import Spinner from '../../components/spinner/spinner';
 import { useEffect } from 'react';
 import { changeFavoriteStatus, fetchCommentsAction, postCommentAction, fetchOfferAction, fetchNearOffersAction } from '../../store/api-actions';
 import { setCurrentOffer, setNearOffers, setComments } from '../../store/action';
+import { AuthorizationStatus } from '../../const';
 
 function OfferPage(): JSX.Element {
   const { id } = useParams<{ id: string }>();
@@ -21,6 +22,7 @@ function OfferPage(): JSX.Element {
   const comments = useAppSelector(getComments);
   const isCommentsLoading = useAppSelector(getIsCommentsLoading);
   const isOfferLoading = useAppSelector(getIsOfferLoading);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus); // Получаем статус авторизации
 
   useEffect(() => {
     if (id) {
@@ -58,6 +60,8 @@ function OfferPage(): JSX.Element {
       // Ошибка обрабатывается в компоненте формы
     }
   };
+
+  const isAuth = authorizationStatus === AuthorizationStatus.Auth;
 
   return (
     <>
@@ -154,7 +158,9 @@ function OfferPage(): JSX.Element {
                   Reviews · <span className="reviews__amount">{comments.length}</span>
                 </h2>
                 {!isCommentsLoading && <ReviewsList reviews={comments} />}
-                <ReviewForm onSubmit={handleReviewSubmit} />
+                {isAuth && (
+                  <ReviewForm onSubmit={handleReviewSubmit} />
+                )}
               </section>
             </div>
           </div>
