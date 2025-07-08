@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 import { changeFavoriteStatus, fetchCommentsAction, postCommentAction, fetchOfferAction, fetchNearOffersAction } from '../../store/api-actions';
 import { setCurrentOffer, setNearOffers, setComments } from '../../store/action';
 import { AuthorizationStatus } from '../../const';
+import { toast } from 'react-toastify';
 
 function OfferPage(): JSX.Element {
   const { id } = useParams<{ id: string }>();
@@ -22,7 +23,7 @@ function OfferPage(): JSX.Element {
   const comments = useAppSelector(getComments);
   const isCommentsLoading = useAppSelector(getIsCommentsLoading);
   const isOfferLoading = useAppSelector(getIsOfferLoading);
-  const authorizationStatus = useAppSelector(getAuthorizationStatus); // Получаем статус авторизации
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
 
   useEffect(() => {
     if (id) {
@@ -56,8 +57,9 @@ function OfferPage(): JSX.Element {
   const handleReviewSubmit = async (comment: string, rating: number) => {
     try {
       await dispatch(postCommentAction({ offerId: id, comment, rating })).unwrap();
+      toast.success('Comment successfully posted!');
     } catch {
-      // Ошибка обрабатывается в компоненте формы
+      toast.error('Failed to post comment');
     }
   };
 
@@ -158,9 +160,7 @@ function OfferPage(): JSX.Element {
                   Reviews · <span className="reviews__amount">{comments.length}</span>
                 </h2>
                 {!isCommentsLoading && <ReviewsList reviews={comments} />}
-                {isAuth && (
-                  <ReviewForm onSubmit={handleReviewSubmit} />
-                )}
+                {isAuth && <ReviewForm onSubmit={handleReviewSubmit} />}
               </section>
             </div>
           </div>
