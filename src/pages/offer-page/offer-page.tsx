@@ -51,8 +51,12 @@ function OfferPage(): JSX.Element {
     }));
   };
 
-  const handleReviewSubmit = (comment: string, rating: number) => {
-    dispatch(postCommentAction({ offerId: id, comment, rating }));
+  const handleReviewSubmit = async (comment: string, rating: number) => {
+    try {
+      await dispatch(postCommentAction({ offerId: id, comment, rating })).unwrap();
+    } catch {
+      // Ошибка обрабатывается в компоненте формы
+    }
   };
 
   return (

@@ -1,11 +1,12 @@
 import { useState, FormEvent, ChangeEvent, Fragment } from 'react';
+import { toast } from 'react-toastify';
 
 const MIN_COMMENT_LENGTH = 50;
 const MAX_COMMENT_LENGTH = 300;
 const RATING_VALUES = [5, 4, 3, 2, 1];
 
 type ReviewFormProps = {
-  onSubmit: (comment: string, rating: number) => void;
+  onSubmit: (comment: string, rating: number) => Promise<void>;
 };
 
 function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
@@ -14,6 +15,7 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
     review: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleRatingChange = (evt: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, rating: evt.target.value });
@@ -26,14 +28,23 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
     setIsSubmitting(true);
+    setError(null);
 
-    onSubmit(formData.review, Number(formData.rating));
-
-    setFormData({
-      rating: '0',
-      review: ''
-    });
-    setIsSubmitting(false);
+    (async () => {
+      try {
+        await onSubmit(formData.review, Number(formData.rating));
+        setFormData({
+          rating: '0',
+          review: ''
+        });
+        toast.success('Comment successfully posted!');
+      } catch (err) {
+        setError('Failed to post comment. Please try again.');
+        toast.error('Failed to post comment');
+      } finally {
+        setIsSubmitting(false);
+      }
+    })();
   };
 
   const isValid =
@@ -74,6 +85,13 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
         onChange={handleReviewChange}
         disabled={isSubmitting}
       />
+
+      {error && (
+        <p className="reviews__help" style={{ color: '#ff0000', marginBottom: '10px' }}>
+          {error}
+        </p>
+      )}
+
       <div className="reviews__button-wrapper">
         <p className="reviews__help">
           To submit review please make sure to set <span className="reviews__star">rating</span> and describe your stay with at least <b className="reviews__text-amount">50 characters</b>.
