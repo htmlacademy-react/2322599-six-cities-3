@@ -12,13 +12,11 @@ import NotFoundPage from '../../pages/not-found-page/not-found-page';
 import PrivateRoute from '../private-route/private-route';
 import Layout from '../layout/layout';
 import Spinner from '../spinner/spinner';
-import {
-  getIsLoading, getAuthorizationStatus, getIsOffersDataLoading
-} from '../../store/selectors';
+import { getAuthorizationStatus } from '../../store/user-process/selectors';
+import { getIsOffersDataLoading } from '../../store/data-process/selectors';
 
 function App(): JSX.Element {
   const dispatch = useAppDispatch();
-  const isLoading = useAppSelector(getIsLoading);
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const isOffersDataLoading = useAppSelector(getIsOffersDataLoading);
 
@@ -33,7 +31,6 @@ function App(): JSX.Element {
 
   return (
     <HelmetProvider>
-      {isLoading && <Spinner />}
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>

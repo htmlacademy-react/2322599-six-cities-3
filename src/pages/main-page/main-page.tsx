@@ -1,10 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
+import Map from '../../components/map/map';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import MainOffers from '../../components/main-offers/main-offers';
+import OfferList from '../../components/offer-list/offer-list';
 import CitiesList from '../../components/cities-list/cities-list';
-import { getCurrentCityName, getCurrentCityOffers } from '../../store/selectors';
-import { changeCity } from '../../store/action';
+import SortingOptions from '../../components/sorting-options/sorting-options';
+import { getCurrentCityName, getCurrentCityOffers } from '../../store/data-process/selectors';
+import { changeCity } from '../../store/data-process/data-process';
 import type { CityName } from '../../components/cities-list/cities-list';
 import type { SortOption } from '../../components/sorting-options/sorting-options';
 
@@ -80,17 +82,38 @@ function MainPage(): JSX.Element {
             onCityChange={handleCityChange}
           />
         </div>
+        <div className="cities">
+          <div className="cities__places-container container">
+            <section className="cities__places places">
+              <h2 className="visually-hidden">Places</h2>
+              <b className="places__found">
+                {sortedOffers.length} {sortedOffers.length === 1 ? 'place' : 'places'} to stay in {currentCityName}
+              </b>
 
-        <MainOffers
-          sortedOffers={sortedOffers}
-          currentCity={currentCity}
-          currentCityName={currentCityName}
-          currentSort={currentSort}
-          onSortChange={handleSortChange}
-          onCardMouseEnter={handleCardMouseEnter}
-          onCardMouseLeave={handleCardMouseLeave}
-          selectedOfferId={activeOfferId}
-        />
+              <SortingOptions
+                currentOption={currentSort}
+                onOptionChange={handleSortChange}
+              />
+
+              <OfferList
+                offers={sortedOffers}
+                onCardMouseEnter={handleCardMouseEnter}
+                onCardMouseLeave={handleCardMouseLeave}
+                block="cities"
+              />
+            </section>
+            <div className="cities__right-section">
+              <section className="cities__map map">
+
+                <Map
+                  city={currentCity}
+                  offers={currentCityOffers}
+                  selectedOfferId={activeOfferId || undefined}
+                />
+              </section>
+            </div>
+          </div>
+        </div>
       </main>
     </>
   );

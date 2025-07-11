@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { useAppSelector } from '../../hooks';
 import OfferList from '../../components/offer-list/offer-list';
-import { getOffers } from '../../store/selectors';
+import { getOffers } from '../../store/data-process/selectors';
 
 function FavoritesPage(): JSX.Element {
   const offers = useAppSelector(getOffers);

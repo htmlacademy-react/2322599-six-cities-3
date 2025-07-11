@@ -5,12 +5,12 @@ import { AuthorizationStatus, AppRoute } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { logoutAction } from '../../store/api-actions';
 import { useNavigate } from 'react-router-dom';
-import { getUserData } from '../../store/selectors';
+import { getAuthorizationStatus, getUserData } from '../../store/user-process/selectors';
 
 function Layout(): JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const userData = useAppSelector(getUserData);
 
   const handleSignOutClick = (e: React.MouseEvent) => {

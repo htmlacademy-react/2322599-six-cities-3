@@ -2,9 +2,9 @@ import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosError } from 'ax
 import { StatusCodes } from 'http-status-codes';
 import { toast } from 'react-toastify';
 import { getToken } from './token';
+import { AuthorizationStatus, APIRoute } from '../const';
 import { store } from '../store';
 import { requireAuthorization } from '../store/action';
-import { AuthorizationStatus, APIRoute } from '../const';
 
 const BACKEND_URL = 'https://15.design.htmlacademy.pro/six-cities';
 const REQUEST_TIMEOUT = 5000;
