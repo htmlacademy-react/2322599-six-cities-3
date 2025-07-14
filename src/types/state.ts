@@ -15,6 +15,8 @@ export type State = {
     currentOffer: Offer | null;
     nearOffers: Offer[];
     isOfferLoading: boolean;
+    favoriteOffers: Offer[];
+    isFavoriteOffersLoading: boolean;
   };
   [NameSpace.User]: {
     authorizationStatus: AuthorizationStatus;

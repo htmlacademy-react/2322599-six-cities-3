@@ -1,6 +1,6 @@
 import { Offer, City } from '../../types/offers';
 import { SortOption } from '../../components/sorting-options/sorting-options';
-import Map from '../map/map';
+import { Map } from '../map/map';
 import { SortingOptions } from '../sorting-options/sorting-options';
 import OfferList from '../offer-list/offer-list';
 

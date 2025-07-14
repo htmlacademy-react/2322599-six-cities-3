@@ -62,7 +62,7 @@ function OfferCardComponent({
           <span>Premium</span>
         </div>
       )}
-      <div className={`${block}__image-wrapper place-card__image-wrapper`}>
+      <div className={`${block === 'favorites' ? 'favorites__image-wrapper' : 'cities__image-wrapper'} place-card__image-wrapper`}>
         <Link to={generatePath(AppRoute.Offer, { id })}>
           <img
             className="place-card__image"

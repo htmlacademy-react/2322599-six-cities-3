@@ -1,20 +1,35 @@
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useAppSelector } from '../../hooks';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 import OfferList from '../../components/offer-list/offer-list';
-import { getFavoriteOffers } from '../../store/data-process/selectors';
+import { getFavoriteOffers, getIsFavoriteOffersLoading } from '../../store/data-process/selectors';
+import { fetchFavoriteOffers } from '../../store/api-actions';
 import { useMemo } from 'react';
+import Spinner from '../../components/spinner/spinner';
 
 function FavoritesPage(): JSX.Element {
+  const dispatch = useAppDispatch();
   const favoriteOffers = useAppSelector(getFavoriteOffers);
+  const isLoading = useAppSelector(getIsFavoriteOffersLoading);
 
-  const offersByCity = useMemo(() => favoriteOffers.reduce<Record<string, typeof favoriteOffers>>((acc, offer) => {
-    const cityName = offer.city.name;
-    if (!acc[cityName]) {
-      acc[cityName] = [];
-    }
-    acc[cityName].push(offer);
-    return acc;
-  }, {}), [favoriteOffers]);
+  useEffect(() => {
+    dispatch(fetchFavoriteOffers());
+  }, [dispatch]);
+
+  const offersByCity = useMemo(() =>
+    favoriteOffers.reduce<Record<string, typeof favoriteOffers>>((acc, offer) => {
+      const cityName = offer.city.name;
+      if (!acc[cityName]) {
+        acc[cityName] = [];
+      }
+      acc[cityName].push(offer);
+      return acc;
+    }, {}), [favoriteOffers]
+  );
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <>

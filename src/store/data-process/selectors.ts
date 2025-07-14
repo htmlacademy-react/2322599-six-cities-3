@@ -12,14 +12,11 @@ export const getIsCommentsLoading = (state: State): boolean => state[NameSpace.D
 export const getCurrentOffer = (state: State): Offer | null => state[NameSpace.Data].currentOffer;
 export const getNearOffers = (state: State): Offer[] => state[NameSpace.Data].nearOffers;
 export const getIsOfferLoading = (state: State): boolean => state[NameSpace.Data].isOfferLoading;
+export const getFavoriteOffers = (state: State): Offer[] => state[NameSpace.Data].favoriteOffers;
+export const getIsFavoriteOffersLoading = (state: State): boolean => state[NameSpace.Data].isFavoriteOffersLoading;
 
 export const getCurrentCityOffers = (state: State): Offer[] => {
   const cityName = getCurrentCityName(state);
   const offers = getOffers(state);
   return offers.filter((offer) => offer.city.name === cityName);
-};
-
-export const getFavoriteOffers = (state: State): Offer[] => {
-  const offers = getOffers(state);
-  return offers.filter((offer) => offer.isFavorite);
 };

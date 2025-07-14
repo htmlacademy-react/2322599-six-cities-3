@@ -7,7 +7,8 @@ import {
   fetchCommentsAction,
   fetchOfferAction,
   fetchNearOffersAction,
-  updateOfferFavoriteStatus
+  updateOfferFavoriteStatus,
+  fetchFavoriteOffers
 } from '../api-actions';
 
 type DataProcessState = {
@@ -20,6 +21,8 @@ type DataProcessState = {
   currentOffer: Offer | null;
   nearOffers: Offer[];
   isOfferLoading: boolean;
+  favoriteOffers: Offer[];
+  isFavoriteOffersLoading: boolean;
 };
 
 const initialState: DataProcessState = {
@@ -31,7 +34,9 @@ const initialState: DataProcessState = {
   isCommentsLoading: false,
   currentOffer: null,
   nearOffers: [],
-  isOfferLoading: false
+  isOfferLoading: false,
+  favoriteOffers: [],
+  isFavoriteOffersLoading: false
 };
 
 export const dataProcessSlice = createSlice({
@@ -79,6 +84,16 @@ export const dataProcessSlice = createSlice({
       })
       .addCase(fetchNearOffersAction.fulfilled, (state, action: PayloadAction<Offer[]>) => {
         state.nearOffers = action.payload;
+      })
+      .addCase(fetchFavoriteOffers.pending, (state) => {
+        state.isFavoriteOffersLoading = true;
+      })
+      .addCase(fetchFavoriteOffers.fulfilled, (state, action: PayloadAction<Offer[]>) => {
+        state.favoriteOffers = action.payload;
+        state.isFavoriteOffersLoading = false;
+      })
+      .addCase(fetchFavoriteOffers.rejected, (state) => {
+        state.isFavoriteOffersLoading = false;
       })
       .addCase(updateOfferFavoriteStatus, (state, action: PayloadAction<FavoriteData>) => {
         const { offerId, status } = action.payload;
