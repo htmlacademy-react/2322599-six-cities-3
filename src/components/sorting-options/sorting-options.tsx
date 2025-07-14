@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 export type SortOption =
   | 'Popular'
@@ -11,7 +11,7 @@ type SortingOptionsProps = {
   onOptionChange: (option: SortOption) => void;
 };
 
-function SortingOptions({ currentOption, onOptionChange }: SortingOptionsProps): JSX.Element {
+function SortingOptionsComponent({ currentOption, onOptionChange }: SortingOptionsProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const sortOptions: SortOption[] = [
@@ -56,4 +56,4 @@ function SortingOptions({ currentOption, onOptionChange }: SortingOptionsProps):
   );
 }
 
-export default SortingOptions;
+export const SortingOptions = React.memo(SortingOptionsComponent);

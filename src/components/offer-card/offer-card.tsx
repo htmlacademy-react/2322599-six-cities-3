@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link, generatePath } from 'react-router-dom';
 import { useAppDispatch } from '../../hooks';
 import { changeFavoriteStatus } from '../../store/api-actions';
@@ -12,12 +13,12 @@ type OfferCardProps = {
   onMouseLeave?: () => void;
 };
 
-function OfferCard({
+function OfferCardComponent({
   offer,
   block = 'cities',
   onMouseEnter,
   onMouseLeave
-}: OfferCardProps): JSX.Element {
+}: OfferCardProps) {
   const dispatch = useAppDispatch();
   const {
     id,
@@ -99,4 +100,4 @@ function OfferCard({
   );
 }
 
-export default OfferCard;
+export const OfferCard = React.memo(OfferCardComponent);
