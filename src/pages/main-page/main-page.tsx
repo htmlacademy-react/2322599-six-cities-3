@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Map from '../../components/map/map';
 import { useAppDispatch, useAppSelector } from '../../hooks';
@@ -41,21 +41,21 @@ function MainPage(): JSX.Element {
     }
   }, [currentCityOffers, currentSort]);
 
-  const handleCityChange = (city: CityName) => {
+  const handleCityChange = useCallback((city: CityName) => {
     dispatch(changeCity(city));
-  };
+  }, [dispatch]);
 
-  const handleCardMouseEnter = (id: string) => {
+  const handleCardMouseEnter = useCallback((id: string) => {
     setActiveOfferId(id);
-  };
+  }, []);
 
-  const handleCardMouseLeave = () => {
+  const handleCardMouseLeave = useCallback(() => {
     setActiveOfferId(null);
-  };
+  }, []);
 
-  const handleSortChange = (option: SortOption) => {
+  const handleSortChange = useCallback((option: SortOption) => {
     setCurrentSort(option);
-  };
+  }, []);
 
   const currentCity = currentCityOffers.length > 0
     ? currentCityOffers[0].city
