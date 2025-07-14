@@ -1,14 +1,15 @@
 import { NameSpace } from '../const';
-import { AuthorizationStatus } from '../const';
 import { Offer } from './offers';
 import { Review } from './reviews';
 import { UserData } from './user-data';
+import { AuthorizationStatus } from '../const';
 
 export type State = {
   [NameSpace.Data]: {
     currentCityName: string;
     offers: Offer[];
     isOffersDataLoading: boolean;
+    offersError: boolean;
     comments: Review[];
     isCommentsLoading: boolean;
     currentOffer: Offer | null;

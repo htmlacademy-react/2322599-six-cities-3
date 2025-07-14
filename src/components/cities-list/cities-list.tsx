@@ -1,15 +1,5 @@
 import React from 'react';
-
-const CITIES = [
-  'Paris',
-  'Cologne',
-  'Brussels',
-  'Amsterdam',
-  'Hamburg',
-  'Dusseldorf'
-] as const;
-
-export type CityName = typeof CITIES[number];
+import { CITIES, CityName } from '../../const';
 
 type CitiesListProps = {
   currentCity: CityName;

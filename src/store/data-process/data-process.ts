@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { NameSpace } from '../../const';
+import { NameSpace, DEFAULT_CITY } from '../../const';
 import { Offer, FavoriteData } from '../../types/offers';
 import { Review } from '../../types/reviews';
 import {
@@ -14,6 +14,7 @@ type DataProcessState = {
   currentCityName: string;
   offers: Offer[];
   isOffersDataLoading: boolean;
+  offersError: boolean;
   comments: Review[];
   isCommentsLoading: boolean;
   currentOffer: Offer | null;
@@ -22,9 +23,10 @@ type DataProcessState = {
 };
 
 const initialState: DataProcessState = {
-  currentCityName: 'Paris',
+  currentCityName: DEFAULT_CITY,
   offers: [],
   isOffersDataLoading: false,
+  offersError: false,
   comments: [],
   isCommentsLoading: false,
   currentOffer: null,
@@ -44,6 +46,7 @@ export const dataProcessSlice = createSlice({
     builder
       .addCase(fetchOffers.pending, (state) => {
         state.isOffersDataLoading = true;
+        state.offersError = false;
       })
       .addCase(fetchOffers.fulfilled, (state, action: PayloadAction<Offer[]>) => {
         state.offers = action.payload;
@@ -51,6 +54,7 @@ export const dataProcessSlice = createSlice({
       })
       .addCase(fetchOffers.rejected, (state) => {
         state.isOffersDataLoading = false;
+        state.offersError = true;
       })
       .addCase(fetchCommentsAction.pending, (state) => {
         state.isCommentsLoading = true;

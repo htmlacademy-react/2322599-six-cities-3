@@ -1,22 +1,25 @@
 import { State } from '../../types/state';
 import { NameSpace } from '../../const';
-import { createSelector } from '@reduxjs/toolkit';
+import { Offer } from '../../types/offers';
+import { Review } from '../../types/reviews';
 
-export const getCurrentCityName = (state: State) => state[NameSpace.Data].currentCityName;
-export const getOffers = (state: State) => state[NameSpace.Data].offers;
-export const getIsOffersDataLoading = (state: State) => state[NameSpace.Data].isOffersDataLoading;
-export const getComments = (state: State) => state[NameSpace.Data].comments;
-export const getIsCommentsLoading = (state: State) => state[NameSpace.Data].isCommentsLoading;
-export const getCurrentOffer = (state: State) => state[NameSpace.Data].currentOffer;
-export const getNearOffers = (state: State) => state[NameSpace.Data].nearOffers;
-export const getIsOfferLoading = (state: State) => state[NameSpace.Data].isOfferLoading;
+export const getCurrentCityName = (state: State): string => state[NameSpace.Data].currentCityName;
+export const getOffers = (state: State): Offer[] => state[NameSpace.Data].offers;
+export const getIsOffersDataLoading = (state: State): boolean => state[NameSpace.Data].isOffersDataLoading;
+export const getOffersError = (state: State): boolean => state[NameSpace.Data].offersError;
+export const getComments = (state: State): Review[] => state[NameSpace.Data].comments;
+export const getIsCommentsLoading = (state: State): boolean => state[NameSpace.Data].isCommentsLoading;
+export const getCurrentOffer = (state: State): Offer | null => state[NameSpace.Data].currentOffer;
+export const getNearOffers = (state: State): Offer[] => state[NameSpace.Data].nearOffers;
+export const getIsOfferLoading = (state: State): boolean => state[NameSpace.Data].isOfferLoading;
 
-export const getCurrentCityOffers = createSelector(
-  [getCurrentCityName, getOffers],
-  (city, offers) => offers.filter((offer) => offer.city.name === city)
-);
+export const getCurrentCityOffers = (state: State): Offer[] => {
+  const cityName = getCurrentCityName(state);
+  const offers = getOffers(state);
+  return offers.filter((offer) => offer.city.name === cityName);
+};
 
-export const getFavoriteOffers = createSelector(
-  [getOffers],
-  (offers) => offers.filter((offer) => offer.isFavorite)
-);
+export const getFavoriteOffers = (state: State): Offer[] => {
+  const offers = getOffers(state);
+  return offers.filter((offer) => offer.isFavorite);
+};

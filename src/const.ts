@@ -25,3 +25,14 @@ export enum NameSpace {
   Data = 'DATA',
   User = 'USER',
 }
+
+export const CITIES = [
+  'Paris',
+  'Cologne',
+  'Brussels',
+  'Amsterdam',
+  'Hamburg',
+  'Dusseldorf'
+] as const;
+
+export type CityName = typeof CITIES[number];
