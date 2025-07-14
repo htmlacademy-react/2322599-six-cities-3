@@ -1,11 +1,30 @@
 import { Offer } from '../../types/offers';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { changeFavoriteStatus } from '../../store/api-actions';
+import { useNavigate } from 'react-router-dom';
+import { AppRoute, AuthorizationStatus } from '../../const';
 
 type OfferDetailsProps = {
   offer: Offer;
-  onFavoriteClick: () => void;
 };
 
-function OfferDetails({ offer, onFavoriteClick }: OfferDetailsProps): JSX.Element {
+function OfferDetails({ offer }: OfferDetailsProps): JSX.Element {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const authorizationStatus = useAppSelector((state) => state.USER.authorizationStatus);
+
+  const handleFavoriteClick = () => {
+    if (authorizationStatus !== AuthorizationStatus.Auth) {
+      navigate(AppRoute.Login);
+      return;
+    }
+
+    dispatch(changeFavoriteStatus({
+      offerId: offer.id,
+      status: !offer.isFavorite
+    }));
+  };
+
   return (
     <>
       <div className="offer__gallery-container container">
@@ -30,7 +49,7 @@ function OfferDetails({ offer, onFavoriteClick }: OfferDetailsProps): JSX.Elemen
             <button
               className={`offer__bookmark-button button ${offer.isFavorite ? 'offer__bookmark-button--active' : ''}`}
               type="button"
-              onClick={onFavoriteClick}
+              onClick={handleFavoriteClick}
             >
               <svg className="offer__bookmark-icon" width="31" height="33">
                 <use xlinkHref="#icon-bookmark" />

@@ -6,12 +6,14 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import { logoutAction } from '../../store/api-actions';
 import { useNavigate } from 'react-router-dom';
 import { getAuthorizationStatus, getUserData } from '../../store/user-process/selectors';
+import { getFavoriteOffers } from '../../store/data-process/selectors';
 
 function Layout(): JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const userData = useAppSelector(getUserData);
+  const favoriteOffers = useAppSelector(getFavoriteOffers);
 
   const handleSignOutClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -52,7 +54,7 @@ function Layout(): JSX.Element {
                           {userData.name}
                         </span>
                       ) : null}
-                      <span className="header__favorite-count">3</span>
+                      <span className="header__favorite-count">{favoriteOffers.length}</span>
                     </a>
                   </li>
                   <li className="header__nav-item">

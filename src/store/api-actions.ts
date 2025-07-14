@@ -73,7 +73,11 @@ export const changeFavoriteStatus = createAsyncThunk<void, FavoriteData, {
       await api.post(`${APIRoute.Favorite}/${offerId}/${status ? 1 : 0}`);
       dispatch(updateOfferFavoriteStatus({ offerId, status }));
     } catch (error) {
-      toast.error('Failed to update favorite status');
+      toast.error(status
+        ? 'Failed to add to favorites'
+        : 'Failed to remove from favorites'
+      );
+      throw error;
     }
   },
 );

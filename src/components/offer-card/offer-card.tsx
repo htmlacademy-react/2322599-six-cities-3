@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
-import { Link, generatePath } from 'react-router-dom';
-import { useAppDispatch } from '../../hooks';
+import { Link, generatePath, useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 import { changeFavoriteStatus } from '../../store/api-actions';
 import { Offer, CardListType } from '../../types/offers';
-import { AppRoute } from '../../const';
+import { AppRoute, AuthorizationStatus } from '../../const';
 import './offer-card.css';
 
 type OfferCardProps = {
@@ -20,6 +20,9 @@ function OfferCardComponent({
   onMouseLeave
 }: OfferCardProps) {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const authorizationStatus = useAppSelector((state) => state.USER.authorizationStatus);
+
   const {
     id,
     title,
@@ -36,11 +39,17 @@ function OfferCardComponent({
 
   const handleFavoriteClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+
+    if (authorizationStatus !== AuthorizationStatus.Auth) {
+      navigate(AppRoute.Login);
+      return;
+    }
+
     dispatch(changeFavoriteStatus({
       offerId: id,
       status: !isFavorite
     }));
-  }, [dispatch, id, isFavorite]);
+  }, [dispatch, id, isFavorite, authorizationStatus, navigate]);
 
   return (
     <article
