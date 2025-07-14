@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import Map from '../../components/map/map';
+import { Map } from '../../components/map/map';
 import ReviewForm from '../../components/review-form/review-form';
 import ReviewsList from '../../components/reviews-list/reviews-list';
 import OfferList from '../../components/offer-list/offer-list';
@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import { changeFavoriteStatus, fetchCommentsAction, postCommentAction, fetchOfferAction, fetchNearOffersAction } from '../../store/api-actions';
 import { AuthorizationStatus } from '../../const';
 import { toast } from 'react-toastify';
+import { OfferGallery } from '../../components/offer-gallery/offer-gallery';
 
 function OfferPage(): JSX.Element {
   const { id } = useParams<{ id: string }>();
@@ -67,15 +68,7 @@ function OfferPage(): JSX.Element {
 
       <main className="page__main page__main--offer">
         <section className="offer">
-          <div className="offer__gallery-container container">
-            <div className="offer__gallery">
-              {currentOffer.images?.slice(0, 6).map((image) => (
-                <div key={image} className="offer__image-wrapper">
-                  <img className="offer__image" src={image} alt="Place image" />
-                </div>
-              ))}
-            </div>
-          </div>
+          <OfferGallery images={currentOffer.images} />
 
           <div className="offer__container container">
             <div className="offer__wrapper">

@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, memo } from 'react';
 import { Icon, Marker, layerGroup } from 'leaflet';
 import useMap from '../../hooks/use-map';
 import { Offer } from '../../types/offers';
@@ -25,7 +25,7 @@ const activeIcon = new Icon({
   iconAnchor: [13.5, 39]
 });
 
-function Map({ city, offers, selectedOfferId }: MapProps): JSX.Element {
+function MapComponent({ city, offers, selectedOfferId }: MapProps): JSX.Element {
   const mapRef = useRef(null);
   const map = useMap(mapRef, city);
 
@@ -66,4 +66,10 @@ function Map({ city, offers, selectedOfferId }: MapProps): JSX.Element {
   return <div style={{ height: '100%' }} ref={mapRef} />;
 }
 
-export default Map;
+const areEqual = (prevProps: MapProps, nextProps: MapProps) => (
+  prevProps.city === nextProps.city &&
+  prevProps.offers === nextProps.offers &&
+  prevProps.selectedOfferId === nextProps.selectedOfferId
+);
+
+export const Map = memo(MapComponent, areEqual);

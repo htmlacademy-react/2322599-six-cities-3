@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
-import Map from '../../components/map/map';
+import { Map } from '../../components/map/map';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import OfferList from '../../components/offer-list/offer-list';
 import { CitiesList } from '../../components/cities-list/cities-list';

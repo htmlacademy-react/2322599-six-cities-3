@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, generatePath } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import { useAppDispatch, useAppSelector } from '../../hooks/index';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 import { AppRoute, AuthorizationStatus } from '../../const';
 import { fetchOffers, checkAuthAction } from '../../store/api-actions';
 import MainPage from '../../pages/main-page/main-page';
@@ -15,19 +15,8 @@ import Spinner from '../spinner/spinner';
 import { getAuthorizationStatus } from '../../store/user-process/selectors';
 import { getIsOffersDataLoading } from '../../store/data-process/selectors';
 
-function App(): JSX.Element {
-  const dispatch = useAppDispatch();
+function AppContent() {
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
-  const isOffersDataLoading = useAppSelector(getIsOffersDataLoading);
-
-  useEffect(() => {
-    dispatch(checkAuthAction());
-    dispatch(fetchOffers());
-  }, [dispatch]);
-
-  if (authorizationStatus === AuthorizationStatus.Unknown || isOffersDataLoading) {
-    return <Spinner />;
-  }
 
   return (
     <HelmetProvider>
@@ -57,6 +46,23 @@ function App(): JSX.Element {
       </BrowserRouter>
     </HelmetProvider>
   );
+}
+
+function App(): JSX.Element {
+  const dispatch = useAppDispatch();
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  const isOffersDataLoading = useAppSelector(getIsOffersDataLoading);
+
+  useEffect(() => {
+    dispatch(checkAuthAction());
+    dispatch(fetchOffers());
+  }, [dispatch]);
+
+  if (authorizationStatus === AuthorizationStatus.Unknown || isOffersDataLoading) {
+    return <Spinner />;
+  }
+
+  return <AppContent />;
 }
 
 export default App;

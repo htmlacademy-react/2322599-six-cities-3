@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Link, generatePath } from 'react-router-dom';
 import { useAppDispatch } from '../../hooks';
 import { changeFavoriteStatus } from '../../store/api-actions';
@@ -34,13 +34,13 @@ function OfferCardComponent({
   const widthPercent = Math.round(rating) * 20;
   const ratingLineClass = `rating__stars-${widthPercent}`;
 
-  const handleFavoriteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleFavoriteClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     dispatch(changeFavoriteStatus({
       offerId: id,
       status: !isFavorite
     }));
-  };
+  }, [dispatch, id, isFavorite]);
 
   return (
     <article
