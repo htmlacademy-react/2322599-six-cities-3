@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import { changeFavoriteStatus } from '../../store/api-actions';
 import { Offer, CardListType } from '../../types/offers';
 import { AppRoute, AuthorizationStatus } from '../../const';
+import classNames from 'classnames';
 import './offer-card.css';
 
 const getTypeName = (type: string) => {
@@ -68,9 +69,14 @@ function OfferCardComponent({
     }));
   }, [dispatch, id, isFavorite, authorizationStatus, navigate]);
 
+  const cardClass = classNames(
+    block === 'favorites' ? 'favorites__card' : `${block}__card`,
+    'place-card'
+  );
+
   return (
     <article
-      className={`${block}__card place-card`}
+      className={cardClass}
       onMouseEnter={() => onMouseEnter?.(id)}
       onMouseLeave={() => onMouseLeave?.()}
     >
@@ -84,8 +90,8 @@ function OfferCardComponent({
           <img
             className="place-card__image"
             src={previewImage}
-            width="260"
-            height="200"
+            width={block === 'favorites' ? '150' : '260'}
+            height={block === 'favorites' ? '110' : '200'}
             alt="Place image"
           />
         </Link>

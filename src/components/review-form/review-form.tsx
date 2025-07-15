@@ -1,4 +1,4 @@
-import { useState, FormEvent, ChangeEvent, Fragment, useEffect } from 'react';
+import { useState, FormEvent, ChangeEvent, Fragment } from 'react';
 import { toast } from 'react-toastify';
 
 const MIN_COMMENT_LENGTH = 50;
@@ -16,11 +16,6 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [characterCount, setCharacterCount] = useState(0);
-
-  useEffect(() => {
-    setCharacterCount(formData.review.length);
-  }, [formData.review]);
 
   const handleRatingChange = (evt: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, rating: evt.target.value });
@@ -37,6 +32,15 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
 
     if (formData.rating === '0') {
       setError('Please select a rating');
+      return;
+    }
+
+    const isReviewValid =
+      formData.review.length >= MIN_COMMENT_LENGTH &&
+      formData.review.length <= MAX_COMMENT_LENGTH;
+
+    if (!isReviewValid) {
+      setError(`Comment must be between ${MIN_COMMENT_LENGTH} and ${MAX_COMMENT_LENGTH} characters`);
       return;
     }
 
@@ -112,20 +116,6 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
         onChange={handleReviewChange}
         disabled={isSubmitting}
       />
-
-      <div className="reviews__character-count">
-        {characterCount}/{MAX_COMMENT_LENGTH} characters
-        {characterCount < MIN_COMMENT_LENGTH && (
-          <span className="reviews__character-warning">
-            (minimum {MIN_COMMENT_LENGTH} characters)
-          </span>
-        )}
-        {characterCount > MAX_COMMENT_LENGTH && (
-          <span className="reviews__character-warning">
-            (maximum {MAX_COMMENT_LENGTH} characters)
-          </span>
-        )}
-      </div>
 
       <div className="reviews__button-wrapper">
         <p className="reviews__help">

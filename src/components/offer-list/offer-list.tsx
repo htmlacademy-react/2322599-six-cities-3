@@ -15,7 +15,12 @@ function OfferList({
   block = 'cities'
 }: OfferListProps): JSX.Element {
   return (
-    <div className={`${block}__${block === 'favorites' ? 'places' : 'places-list'} places__list tabs__content`}>
+    <div className={
+      block === 'favorites'
+        ? 'favorites__places'
+        : `${block}__places-list places__list tabs__content`
+    }
+    >
       {offers.map((offer) => (
         <OfferCard
           key={offer.id}
