@@ -2,19 +2,28 @@ import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import OfferList from '../../components/offer-list/offer-list';
-import { getFavoriteOffers, getIsFavoriteOffersLoading } from '../../store/data-process/selectors';
+import { getFavoriteOffers, getIsFavoriteOffersLoading, getFavoriteOffersError } from '../../store/data-process/selectors';
 import { fetchFavoriteOffers } from '../../store/api-actions';
 import { useMemo } from 'react';
 import Spinner from '../../components/spinner/spinner';
+import Footer from '../../components/footer/footer';
+import { Link } from 'react-router-dom';
+import { AppRoute } from '../../const';
 
 function FavoritesPage(): JSX.Element {
   const dispatch = useAppDispatch();
   const favoriteOffers = useAppSelector(getFavoriteOffers);
   const isLoading = useAppSelector(getIsFavoriteOffersLoading);
+  const error = useAppSelector(getFavoriteOffersError);
 
   useEffect(() => {
     dispatch(fetchFavoriteOffers());
   }, [dispatch]);
+
+  const handleRetryClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    dispatch(fetchFavoriteOffers());
+  };
 
   const offersByCity = useMemo(() =>
     favoriteOffers.reduce<Record<string, typeof favoriteOffers>>((acc, offer) => {
@@ -31,8 +40,35 @@ function FavoritesPage(): JSX.Element {
     return <Spinner />;
   }
 
+  if (error) {
+    return (
+      <div className="page page--favorites">
+        <main className="page__main page__main--favorites">
+          <div className="page__favorites-container container">
+            <section className="favorites favorites--empty">
+              <h1 className="visually-hidden">Favorites</h1>
+              <div className="favorites__status-wrapper">
+                <b className="favorites__status">Error loading favorites</b>
+                <p className="favorites__status-description">
+                  Failed to load your favorite offers. Please try again later.
+                </p>
+                <button
+                  className="favorites__retry-button button"
+                  onClick={handleRetryClick}
+                >
+                  Try again
+                </button>
+              </div>
+            </section>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
-    <>
+    <div className="page">
       <Helmet>
         <title>6 cities. Your favorites</title>
       </Helmet>
@@ -45,6 +81,9 @@ function FavoritesPage(): JSX.Element {
               <div className="favorites__status-wrapper">
                 <b className="favorites__status">Nothing yet saved.</b>
                 <p className="favorites__status-description">Save properties to narrow down search or plan your future trips.</p>
+                <Link to={AppRoute.Root} className="favorites__status-link">
+                  Go to main page
+                </Link>
               </div>
             </section>
           ) : (
@@ -73,7 +112,8 @@ function FavoritesPage(): JSX.Element {
           )}
         </div>
       </main>
-    </>
+      <Footer />
+    </div>
   );
 }
 

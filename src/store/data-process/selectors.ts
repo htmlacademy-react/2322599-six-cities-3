@@ -14,6 +14,7 @@ export const getNearOffers = (state: State): Offer[] => state[NameSpace.Data].ne
 export const getIsOfferLoading = (state: State): boolean => state[NameSpace.Data].isOfferLoading;
 export const getFavoriteOffers = (state: State): Offer[] => state[NameSpace.Data].favoriteOffers;
 export const getIsFavoriteOffersLoading = (state: State): boolean => state[NameSpace.Data].isFavoriteOffersLoading;
+export const getFavoriteOffersError = (state: State): boolean => state[NameSpace.Data].favoriteOffersError;
 
 export const getCurrentCityOffers = (state: State): Offer[] => {
   const cityName = getCurrentCityName(state);

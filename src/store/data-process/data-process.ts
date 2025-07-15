@@ -23,6 +23,7 @@ type DataProcessState = {
   isOfferLoading: boolean;
   favoriteOffers: Offer[];
   isFavoriteOffersLoading: boolean;
+  favoriteOffersError: boolean;
 };
 
 const initialState: DataProcessState = {
@@ -36,7 +37,8 @@ const initialState: DataProcessState = {
   nearOffers: [],
   isOfferLoading: false,
   favoriteOffers: [],
-  isFavoriteOffersLoading: false
+  isFavoriteOffersLoading: false,
+  favoriteOffersError: false
 };
 
 export const dataProcessSlice = createSlice({
@@ -87,6 +89,7 @@ export const dataProcessSlice = createSlice({
       })
       .addCase(fetchFavoriteOffers.pending, (state) => {
         state.isFavoriteOffersLoading = true;
+        state.favoriteOffersError = false;
       })
       .addCase(fetchFavoriteOffers.fulfilled, (state, action: PayloadAction<Offer[]>) => {
         state.favoriteOffers = action.payload;
@@ -94,6 +97,7 @@ export const dataProcessSlice = createSlice({
       })
       .addCase(fetchFavoriteOffers.rejected, (state) => {
         state.isFavoriteOffersLoading = false;
+        state.favoriteOffersError = true;
       })
       .addCase(updateOfferFavoriteStatus, (state, action: PayloadAction<FavoriteData>) => {
         const { offerId, status } = action.payload;
