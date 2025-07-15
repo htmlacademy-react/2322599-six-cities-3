@@ -13,6 +13,8 @@ type MainOffersProps = {
   onCardMouseEnter: (id: string) => void;
   onCardMouseLeave: () => void;
   selectedOfferId: string | null;
+  isOpen: boolean;
+  onToggleMenu: () => void;
 };
 
 function MainOffers({
@@ -23,7 +25,9 @@ function MainOffers({
   onSortChange,
   onCardMouseEnter,
   onCardMouseLeave,
-  selectedOfferId
+  selectedOfferId,
+  isOpen,
+  onToggleMenu,
 }: MainOffersProps): JSX.Element {
   return (
     <div className="cities">
@@ -37,6 +41,8 @@ function MainOffers({
           <SortingOptions
             currentOption={currentSort}
             onOptionChange={onSortChange}
+            isOpen={isOpen}
+            onToggleMenu={onToggleMenu}
           />
 
           <OfferList
