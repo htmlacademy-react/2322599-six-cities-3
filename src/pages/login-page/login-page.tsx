@@ -1,4 +1,4 @@
-import { useEffect, useRef, FormEvent } from 'react';
+import { useEffect, useRef, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useAppDispatch, useAppSelector } from '../../hooks';
@@ -13,6 +13,7 @@ function LoginPage(): JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   useEffect(() => {
     if (authorizationStatus === AuthorizationStatus.Auth) {
@@ -20,15 +21,32 @@ function LoginPage(): JSX.Element {
     }
   }, [authorizationStatus, navigate]);
 
+  const validatePassword = (password: string): boolean => {
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasDigit = /\d/.test(password);
+    return hasLetter && hasDigit;
+  };
+
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (emailRef.current !== null && passwordRef.current !== null) {
-      dispatch(loginAction({
-        email: emailRef.current.value,
-        password: passwordRef.current.value
-      }));
+    if (emailRef.current === null || passwordRef.current === null) {
+      return;
     }
+
+    const email = emailRef.current.value;
+    const password = passwordRef.current.value;
+
+    if (!validatePassword(password)) {
+      setPasswordError('Password must contain at least one letter and one digit');
+      return;
+    }
+
+    setPasswordError(null);
+    dispatch(loginAction({
+      email,
+      password
+    }));
   };
 
   return (
@@ -75,6 +93,9 @@ function LoginPage(): JSX.Element {
                   placeholder="Password"
                   required
                 />
+                {passwordError && (
+                  <p className="login__error-message">{passwordError}</p>
+                )}
               </div>
               <button className="login__submit form__submit button" type="submit">
                 Sign in
