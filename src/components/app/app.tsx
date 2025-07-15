@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, generatePath } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, generatePath, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { AppRoute, AuthorizationStatus } from '../../const';
@@ -23,10 +23,7 @@ function AppContent() {
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
-            <Route
-              path={AppRoute.Root}
-              element={<MainPage />}
-            />
+            <Route path={AppRoute.Root} element={<MainPage />} />
             <Route
               path={AppRoute.Favorites}
               element={
@@ -40,7 +37,14 @@ function AppContent() {
               element={<OfferPage />}
             />
           </Route>
-          <Route path={AppRoute.Login} element={<LoginPage />} />
+          <Route
+            path={AppRoute.Login}
+            element={
+              authorizationStatus === AuthorizationStatus.Auth
+                ? <Navigate to={AppRoute.Root} />
+                : <LoginPage />
+            }
+          />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>

@@ -56,7 +56,9 @@ export const createAPI = (): AxiosInstance => {
       }
 
       if (status === 401) {
-        store.dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
+        if (url !== APIRoute.Login) {
+          store.dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
+        }
       }
 
       if (shouldDisplayError(status)) {
