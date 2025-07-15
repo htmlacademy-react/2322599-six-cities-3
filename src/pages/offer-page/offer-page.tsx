@@ -2,8 +2,6 @@ import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { Map } from '../../components/map/map';
-import ReviewForm from '../../components/review-form/review-form';
-import ReviewsList from '../../components/reviews-list/reviews-list';
 import OfferList from '../../components/offer-list/offer-list';
 import { getComments, getIsCommentsLoading, getCurrentOffer, getNearOffers, getIsOfferLoading } from '../../store/data-process/selectors';
 import { getAuthorizationStatus } from '../../store/user-process/selectors';
@@ -13,6 +11,7 @@ import { useEffect } from 'react';
 import { changeFavoriteStatus, fetchCommentsAction, postCommentAction, fetchOfferAction, fetchNearOffersAction } from '../../store/api-actions';
 import { AuthorizationStatus } from '../../const';
 import { toast } from 'react-toastify';
+import OfferReviews from '../../components/offer-reviews/offer-reviews';
 import { OfferGallery } from '../../components/offer-gallery/offer-gallery';
 
 function OfferPage(): JSX.Element {
@@ -142,13 +141,12 @@ function OfferPage(): JSX.Element {
                 </div>
               </div>
 
-              <section className="offer__reviews reviews">
-                <h2 className="reviews__title">
-                  Reviews · <span className="reviews__amount">{comments.length}</span>
-                </h2>
-                {!isCommentsLoading && <ReviewsList reviews={comments} />}
-                {isAuth && <ReviewForm onSubmit={handleReviewSubmit} />}
-              </section>
+              <OfferReviews
+                reviews={comments}
+                isCommentsLoading={isCommentsLoading}
+                isAuth={isAuth}
+                onReviewSubmit={handleReviewSubmit}
+              />
             </div>
           </div>
           <section className="offer__map map">
