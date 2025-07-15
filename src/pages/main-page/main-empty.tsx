@@ -1,4 +1,6 @@
 import { CityName } from '../../const';
+import { Link } from 'react-router-dom';
+import { AppRoute } from '../../const';
 
 type MainEmptyProps = {
   cityName: CityName;
@@ -15,6 +17,12 @@ function MainEmpty({ cityName }: MainEmptyProps): JSX.Element {
               We could not find any property available at the moment in {cityName}
             </p>
           </div>
+          <Link
+            to={AppRoute.Root}
+            className="cities__status-link"
+          >
+            Try another city
+          </Link>
         </section>
         <div className="cities__right-section"></div>
       </div>

@@ -39,6 +39,7 @@ function OfferCardComponent({
 
   const handleFavoriteClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
 
     if (authorizationStatus !== AuthorizationStatus.Auth) {
       navigate(AppRoute.Login);

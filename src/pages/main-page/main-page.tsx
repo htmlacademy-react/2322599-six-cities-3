@@ -53,6 +53,7 @@ function MainPage(): JSX.Element {
   }, [currentCityOffers, currentSort]);
 
   const handleCityChange = useCallback((city: CityName) => {
+    setActiveOfferId(null);
     dispatch(changeCity(city));
   }, [dispatch]);
 
