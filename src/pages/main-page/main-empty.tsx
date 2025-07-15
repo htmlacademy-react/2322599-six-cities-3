@@ -24,11 +24,19 @@ function MainEmpty({ cityName }: MainEmptyProps): JSX.Element {
             Try another city
           </Link>
         </section>
-        <div className="cities__right-section"></div>
+        <div className="cities__right-section">
+          <div className="cities__no-places-map">
+            <img
+              src="img/no-places.png"
+              alt="No places available"
+              width="800"
+              height="600"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
 export default MainEmpty;
-

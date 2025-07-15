@@ -14,6 +14,7 @@ import MainEmpty from '../main-page/main-empty';
 function MainPage(): JSX.Element {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
   const [currentSort, setCurrentSort] = useState<SortOption>('Popular');
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const dispatch = useAppDispatch();
 
   const currentCityName = useAppSelector(getCurrentCityName);
@@ -55,6 +56,7 @@ function MainPage(): JSX.Element {
   const handleCityChange = useCallback((city: CityName) => {
     setActiveOfferId(null);
     dispatch(changeCity(city));
+    setIsSortMenuOpen(false);
   }, [dispatch]);
 
   const handleCardMouseEnter = useCallback((id: string) => {
@@ -67,7 +69,12 @@ function MainPage(): JSX.Element {
 
   const handleSortChange = useCallback((option: SortOption) => {
     setCurrentSort(option);
+    setIsSortMenuOpen(false);
   }, []);
+
+  const toggleSortMenu = useCallback(() => {
+    setIsSortMenuOpen(!isSortMenuOpen);
+  }, [isSortMenuOpen]);
 
   const currentCity = currentCityOffers.length > 0
     ? currentCityOffers[0].city
@@ -109,6 +116,8 @@ function MainPage(): JSX.Element {
                 <SortingOptions
                   currentOption={currentSort}
                   onOptionChange={handleSortChange}
+                  isOpen={isSortMenuOpen}
+                  onToggleMenu={toggleSortMenu}
                 />
 
                 <div className="cities__places-list places__list tabs__content">

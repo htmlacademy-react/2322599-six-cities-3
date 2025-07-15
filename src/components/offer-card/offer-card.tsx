@@ -6,6 +6,21 @@ import { Offer, CardListType } from '../../types/offers';
 import { AppRoute, AuthorizationStatus } from '../../const';
 import './offer-card.css';
 
+const getTypeName = (type: string) => {
+  switch (type) {
+    case 'apartment':
+      return 'Apartment';
+    case 'room':
+      return 'Private Room';
+    case 'house':
+      return 'House';
+    case 'hotel':
+      return 'Hotel';
+    default:
+      return type;
+  }
+};
+
 type OfferCardProps = {
   offer: Offer;
   block: CardListType;
@@ -34,7 +49,8 @@ function OfferCardComponent({
     previewImage,
   } = offer;
 
-  const widthPercent = Math.round(rating) * 20;
+  const roundedRating = Math.round(rating);
+  const widthPercent = roundedRating * 20;
   const ratingLineClass = `rating__stars-${widthPercent}`;
 
   const handleFavoriteClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
@@ -96,7 +112,7 @@ function OfferCardComponent({
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">
             <span className={ratingLineClass}></span>
-            <span className="visually-hidden">Rating</span>
+            <span className="visually-hidden">Rating: {roundedRating} stars</span>
           </div>
         </div>
         <h2 className="place-card__name">
@@ -104,7 +120,7 @@ function OfferCardComponent({
             {title}
           </Link>
         </h2>
-        <p className="place-card__type">{type}</p>
+        <p className="place-card__type">{getTypeName(type)}</p>
       </div>
     </article>
   );
