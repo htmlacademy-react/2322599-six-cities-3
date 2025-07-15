@@ -1,27 +1,24 @@
-const CITIES = [
-  'Paris',
-  'Cologne',
-  'Brussels',
-  'Amsterdam',
-  'Hamburg',
-  'Dusseldorf'
-] as const;
-
-export type CityName = typeof CITIES[number];
+import React from 'react';
+import { CITIES, CityName } from '../../const';
+import classNames from 'classnames';
 
 type CitiesListProps = {
   currentCity: CityName;
   onCityChange: (city: CityName) => void;
 };
 
-function CitiesList({ currentCity, onCityChange }: CitiesListProps): JSX.Element {
+function CitiesListComponent({ currentCity, onCityChange }: CitiesListProps) {
   return (
     <section className="locations container">
       <ul className="locations__list tabs__list">
         {CITIES.map((city) => (
           <li key={city} className="locations__item">
             <a
-              className={`locations__item-link tabs__item ${city === currentCity ? 'tabs__item--active' : ''}`}
+              className={classNames(
+                'locations__item-link',
+                'tabs__item',
+                { 'tabs__item--active': city === currentCity }
+              )}
               href="#"
               onClick={(e) => {
                 e.preventDefault();
@@ -37,4 +34,4 @@ function CitiesList({ currentCity, onCityChange }: CitiesListProps): JSX.Element
   );
 }
 
-export default CitiesList;
+export const CitiesList = React.memo(CitiesListComponent);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React from 'react';
 
 export type SortOption =
   | 'Popular'
@@ -9,11 +9,16 @@ export type SortOption =
 type SortingOptionsProps = {
   currentOption: SortOption;
   onOptionChange: (option: SortOption) => void;
+  isOpen: boolean;
+  onToggleMenu: () => void;
 };
 
-function SortingOptions({ currentOption, onOptionChange }: SortingOptionsProps): JSX.Element {
-  const [isOpen, setIsOpen] = useState(false);
-
+function SortingOptionsComponent({
+  currentOption,
+  onOptionChange,
+  isOpen,
+  onToggleMenu
+}: SortingOptionsProps) {
   const sortOptions: SortOption[] = [
     'Popular',
     'Price: low to high',
@@ -21,10 +26,9 @@ function SortingOptions({ currentOption, onOptionChange }: SortingOptionsProps):
     'Top rated first'
   ];
 
-  const toggleOptions = () => setIsOpen(!isOpen);
   const handleOptionClick = (option: SortOption) => {
     onOptionChange(option);
-    setIsOpen(false);
+    onToggleMenu();
   };
 
   return (
@@ -33,7 +37,7 @@ function SortingOptions({ currentOption, onOptionChange }: SortingOptionsProps):
       <span
         className="places__sorting-type"
         tabIndex={0}
-        onClick={toggleOptions}
+        onClick={onToggleMenu}
       >
         {currentOption}
         <svg className="places__sorting-arrow" width="7" height="4">
@@ -56,4 +60,4 @@ function SortingOptions({ currentOption, onOptionChange }: SortingOptionsProps):
   );
 }
 
-export default SortingOptions;
+export const SortingOptions = React.memo(SortingOptionsComponent);

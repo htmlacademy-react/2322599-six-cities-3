@@ -1,18 +1,19 @@
 import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import Map from '../../components/map/map';
+import { Map } from '../../components/map/map';
 import ReviewForm from '../../components/review-form/review-form';
 import ReviewsList from '../../components/reviews-list/reviews-list';
 import OfferList from '../../components/offer-list/offer-list';
-import { getComments, getIsCommentsLoading, getCurrentOffer, getNearOffers, getIsOfferLoading, getAuthorizationStatus } from '../../store/selectors';
+import { getComments, getIsCommentsLoading, getCurrentOffer, getNearOffers, getIsOfferLoading } from '../../store/data-process/selectors';
+import { getAuthorizationStatus } from '../../store/user-process/selectors';
 import NotFoundPage from '../not-found-page/not-found-page';
 import Spinner from '../../components/spinner/spinner';
 import { useEffect } from 'react';
 import { changeFavoriteStatus, fetchCommentsAction, postCommentAction, fetchOfferAction, fetchNearOffersAction } from '../../store/api-actions';
-import { setCurrentOffer, setNearOffers, setComments } from '../../store/action';
 import { AuthorizationStatus } from '../../const';
 import { toast } from 'react-toastify';
+import { OfferGallery } from '../../components/offer-gallery/offer-gallery';
 
 function OfferPage(): JSX.Element {
   const { id } = useParams<{ id: string }>();
@@ -31,12 +32,6 @@ function OfferPage(): JSX.Element {
       dispatch(fetchNearOffersAction(id));
       dispatch(fetchCommentsAction(id));
     }
-
-    return () => {
-      dispatch(setCurrentOffer(null));
-      dispatch(setNearOffers([]));
-      dispatch(setComments([]));
-    };
   }, [dispatch, id]);
 
   if (isOfferLoading) {
@@ -73,15 +68,7 @@ function OfferPage(): JSX.Element {
 
       <main className="page__main page__main--offer">
         <section className="offer">
-          <div className="offer__gallery-container container">
-            <div className="offer__gallery">
-              {currentOffer.images?.slice(0, 6).map((image) => (
-                <div key={image} className="offer__image-wrapper">
-                  <img className="offer__image" src={image} alt="Place image" />
-                </div>
-              ))}
-            </div>
-          </div>
+          <OfferGallery images={currentOffer.images} />
 
           <div className="offer__container container">
             <div className="offer__wrapper">

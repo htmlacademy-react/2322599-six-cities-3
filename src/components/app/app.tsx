@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, generatePath } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, generatePath, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import { useAppDispatch, useAppSelector } from '../../hooks/index';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 import { AppRoute, AuthorizationStatus } from '../../const';
 import { fetchOffers, checkAuthAction } from '../../store/api-actions';
 import MainPage from '../../pages/main-page/main-page';
@@ -12,35 +12,18 @@ import NotFoundPage from '../../pages/not-found-page/not-found-page';
 import PrivateRoute from '../private-route/private-route';
 import Layout from '../layout/layout';
 import Spinner from '../spinner/spinner';
-import {
-  getIsLoading, getAuthorizationStatus, getIsOffersDataLoading
-} from '../../store/selectors';
+import { getAuthorizationStatus } from '../../store/user-process/selectors';
+import { getIsOffersDataLoading } from '../../store/data-process/selectors';
 
-function App(): JSX.Element {
-  const dispatch = useAppDispatch();
-  const isLoading = useAppSelector(getIsLoading);
+function AppContent() {
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
-  const isOffersDataLoading = useAppSelector(getIsOffersDataLoading);
-
-  useEffect(() => {
-    dispatch(checkAuthAction());
-    dispatch(fetchOffers());
-  }, [dispatch]);
-
-  if (authorizationStatus === AuthorizationStatus.Unknown || isOffersDataLoading) {
-    return <Spinner />;
-  }
 
   return (
     <HelmetProvider>
-      {isLoading && <Spinner />}
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
-            <Route
-              path={AppRoute.Root}
-              element={<MainPage />}
-            />
+            <Route path={AppRoute.Root} element={<MainPage />} />
             <Route
               path={AppRoute.Favorites}
               element={
@@ -54,12 +37,36 @@ function App(): JSX.Element {
               element={<OfferPage />}
             />
           </Route>
-          <Route path={AppRoute.Login} element={<LoginPage />} />
+          <Route
+            path={AppRoute.Login}
+            element={
+              authorizationStatus === AuthorizationStatus.Auth
+                ? <Navigate to={AppRoute.Root} />
+                : <LoginPage />
+            }
+          />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
     </HelmetProvider>
   );
+}
+
+function App(): JSX.Element {
+  const dispatch = useAppDispatch();
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  const isOffersDataLoading = useAppSelector(getIsOffersDataLoading);
+
+  useEffect(() => {
+    dispatch(checkAuthAction());
+    dispatch(fetchOffers());
+  }, [dispatch]);
+
+  if (authorizationStatus === AuthorizationStatus.Unknown || isOffersDataLoading) {
+    return <Spinner />;
+  }
+
+  return <AppContent />;
 }
 
 export default App;
