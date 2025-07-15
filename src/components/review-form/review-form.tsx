@@ -1,4 +1,5 @@
-import { useState, FormEvent, ChangeEvent, Fragment } from 'react';
+import { useState, FormEvent, ChangeEvent, Fragment, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 const MIN_COMMENT_LENGTH = 50;
 const MAX_COMMENT_LENGTH = 300;
@@ -14,42 +15,68 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
     review: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [characterCount, setCharacterCount] = useState(0);
+
+  useEffect(() => {
+    setCharacterCount(formData.review.length);
+  }, [formData.review]);
 
   const handleRatingChange = (evt: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, rating: evt.target.value });
+    setError(null);
   };
 
   const handleReviewChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
     setFormData({ ...formData, review: evt.target.value });
+    setError(null);
   };
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    setIsSubmitting(true);
 
-    (async () => {
+    if (formData.rating === '0') {
+      setError('Please select a rating');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    const submitReview = async () => {
       try {
         await onSubmit(formData.review, Number(formData.rating));
         setFormData({
           rating: '0',
           review: ''
         });
-      } catch {
-        // Ошибка обрабатывается на уровне страницы
+        toast.success('Review submitted successfully!');
+      } catch (err) {
+        setError('Failed to submit review. Please try again.');
+        toast.error('Failed to submit review');
       } finally {
         setIsSubmitting(false);
       }
-    })();
+    };
+
+    submitReview();
   };
 
-  const isValid =
+  const isReviewValid =
     formData.review.length >= MIN_COMMENT_LENGTH &&
-    formData.review.length <= MAX_COMMENT_LENGTH &&
-    formData.rating !== '0';
+    formData.review.length <= MAX_COMMENT_LENGTH;
+
+  const isRatingValid = formData.rating !== '0';
+
+  const isValid = isReviewValid && isRatingValid;
 
   return (
     <form className="reviews__form form" action="#" method="post" onSubmit={handleSubmit}>
-      <label className="reviews__label form__label" htmlFor="review">Your review</label>
+      <label className="reviews__label form__label" htmlFor="review">
+        Your review
+        {error && <span className="reviews__error-message"> — {error}</span>}
+      </label>
+
       <div className="reviews__rating-form form__rating">
         {RATING_VALUES.map((rating) => (
           <Fragment key={rating}>
@@ -63,7 +90,11 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
               onChange={handleRatingChange}
               disabled={isSubmitting}
             />
-            <label htmlFor={`${rating}-stars`} className="reviews__rating-label form__rating-label" title="perfect">
+            <label
+              htmlFor={`${rating}-stars`}
+              className="reviews__rating-label form__rating-label"
+              title={['terribly', 'badly', 'not bad', 'good', 'perfect'][rating - 1]}
+            >
               <svg className="form__star-image" width="37" height="33">
                 <use xlinkHref="#icon-star"></use>
               </svg>
@@ -71,6 +102,7 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
           </Fragment>
         ))}
       </div>
+
       <textarea
         className="reviews__textarea form__textarea"
         id="review"
@@ -80,9 +112,26 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
         onChange={handleReviewChange}
         disabled={isSubmitting}
       />
+
+      <div className="reviews__character-count">
+        {characterCount}/{MAX_COMMENT_LENGTH} characters
+        {characterCount < MIN_COMMENT_LENGTH && (
+          <span className="reviews__character-warning">
+            (minimum {MIN_COMMENT_LENGTH} characters)
+          </span>
+        )}
+        {characterCount > MAX_COMMENT_LENGTH && (
+          <span className="reviews__character-warning">
+            (maximum {MAX_COMMENT_LENGTH} characters)
+          </span>
+        )}
+      </div>
+
       <div className="reviews__button-wrapper">
         <p className="reviews__help">
-          To submit review please make sure to set <span className="reviews__star">rating</span> and describe your stay with at least <b className="reviews__text-amount">50 characters</b>.
+          To submit review please make sure to set{' '}
+          <span className="reviews__star">rating</span> and describe your stay with at least{' '}
+          <b className="reviews__text-amount">{MIN_COMMENT_LENGTH} characters</b>.
         </p>
         <button
           className="reviews__submit form__submit button"
