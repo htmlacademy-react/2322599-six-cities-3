@@ -1,4 +1,4 @@
-import { useEffect, useRef, FormEvent, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useAppDispatch, useAppSelector } from '../../hooks';
@@ -8,12 +8,20 @@ import { getAuthorizationStatus } from '../../store/user-process/selectors';
 import Logo from '../../components/logo/logo';
 
 function LoginPage(): JSX.Element {
-  const emailRef = useRef<HTMLInputElement | null>(null);
-  const passwordRef = useRef<HTMLInputElement | null>(null);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+
+  useEffect(() => () => {
+    setFormData({ email: '', password: '' });
+    setPasswordError(null);
+  }, []);
 
   useEffect(() => {
     if (authorizationStatus === AuthorizationStatus.Auth) {
@@ -27,25 +35,26 @@ function LoginPage(): JSX.Element {
     return hasLetter && hasDigit;
   };
 
-  const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const handleSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (emailRef.current === null || passwordRef.current === null) {
-      return;
-    }
-
-    const email = emailRef.current.value;
-    const password = passwordRef.current.value;
-
-    if (!validatePassword(password)) {
+    if (!validatePassword(formData.password)) {
       setPasswordError('Password must contain at least one letter and one digit');
       return;
     }
 
     setPasswordError(null);
     dispatch(loginAction({
-      email,
-      password
+      email: formData.email,
+      password: formData.password
     }));
   };
 
@@ -75,23 +84,25 @@ function LoginPage(): JSX.Element {
               <div className="login__input-wrapper form__input-wrapper">
                 <label className="visually-hidden">E-mail</label>
                 <input
-                  ref={emailRef}
                   className="login__input form__input"
                   type="email"
                   name="email"
                   placeholder="Email"
                   required
+                  value={formData.email}
+                  onChange={handleInputChange}
                 />
               </div>
               <div className="login__input-wrapper form__input-wrapper">
                 <label className="visually-hidden">Password</label>
                 <input
-                  ref={passwordRef}
                   className="login__input form__input"
                   type="password"
                   name="password"
                   placeholder="Password"
                   required
+                  value={formData.password}
+                  onChange={handleInputChange}
                 />
                 {passwordError && (
                   <p className="login__error-message">{passwordError}</p>
