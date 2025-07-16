@@ -7,6 +7,7 @@ import { AppRoute, AuthorizationStatus } from '../../const';
 import classNames from 'classnames';
 import './offer-card.css';
 import { toast } from 'react-toastify';
+import { getAuthorizationStatus } from '../../store/user-process/selectors';
 
 const getTypeName = (type: string) => {
   switch (type) {
@@ -38,7 +39,7 @@ function OfferCardComponent({
 }: OfferCardProps) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const authorizationStatus = useAppSelector((state) => state.USER.authorizationStatus);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
 
   const {
     id,
@@ -59,6 +60,10 @@ function OfferCardComponent({
     e.preventDefault();
     e.stopPropagation();
 
+    if (authorizationStatus === AuthorizationStatus.Unknown) {
+      return;
+    }
+
     if (authorizationStatus !== AuthorizationStatus.Auth) {
       navigate(AppRoute.Login);
       return;
@@ -74,10 +79,15 @@ function OfferCardComponent({
       });
   }, [dispatch, id, isFavorite, authorizationStatus, navigate]);
 
-  const cardClass = classNames(
-    block === 'favorites' ? 'favorites__card' : `${block}__card`,
-    'place-card'
-  );
+  let cardClass: string;
+
+  if (block === 'favorites') {
+    cardClass = classNames('favorites__card', 'place-card');
+  } else if (block === 'near-places') {
+    cardClass = classNames('near-places__card', 'place-card');
+  } else {
+    cardClass = classNames(`${block}__card`, 'place-card');
+  }
 
   return (
     <article

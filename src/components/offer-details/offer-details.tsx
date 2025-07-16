@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import { changeFavoriteStatus } from '../../store/api-actions';
 import { useNavigate } from 'react-router-dom';
 import { AppRoute, AuthorizationStatus } from '../../const';
+import { getAuthorizationStatus } from '../../store/user-process/selectors';
 
 type OfferDetailsProps = {
   offer: Offer;
@@ -11,9 +12,13 @@ type OfferDetailsProps = {
 function OfferDetails({ offer }: OfferDetailsProps): JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const authorizationStatus = useAppSelector((state) => state.USER.authorizationStatus);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
 
   const handleFavoriteClick = () => {
+    if (authorizationStatus === AuthorizationStatus.Unknown) {
+      return;
+    }
+
     if (authorizationStatus !== AuthorizationStatus.Auth) {
       navigate(AppRoute.Login);
       return;

@@ -56,17 +56,11 @@ export const loginAction = createAsyncThunk<UserData, AuthData, {
   extra: AxiosInstance;
 }>(
   'user/login',
-  async ({ email, password }, { dispatch, extra: api, rejectWithValue }) => {
-    try {
-      const { data } = await api.post<UserData>(APIRoute.Login, { email, password });
-      saveToken(data.token);
-      dispatch(redirectToRoute(AppRoute.Root));
-      toast.success('Login successful!');
-      return data;
-    } catch (error) {
-      toast.error('Failed to login. Please check your credentials and try again.');
-      return rejectWithValue('Server error');
-    }
+  async ({ email, password }, { dispatch, extra: api }) => {
+    const { data } = await api.post<UserData>(APIRoute.Login, { email, password });
+    saveToken(data.token);
+    dispatch(redirectToRoute(AppRoute.Root));
+    return data;
   },
 );
 

@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { Map } from '../../components/map/map';
 import OfferList from '../../components/offer-list/offer-list';
@@ -9,7 +9,7 @@ import NotFoundPage from '../not-found-page/not-found-page';
 import Spinner from '../../components/spinner/spinner';
 import { useEffect } from 'react';
 import { changeFavoriteStatus, fetchCommentsAction, postCommentAction, fetchOfferAction, fetchNearOffersAction } from '../../store/api-actions';
-import { AuthorizationStatus } from '../../const';
+import { AuthorizationStatus, AppRoute } from '../../const';
 import { toast } from 'react-toastify';
 import OfferReviews from '../../components/offer-reviews/offer-reviews';
 import { OfferGallery } from '../../components/offer-gallery/offer-gallery';
@@ -17,6 +17,7 @@ import { OfferGallery } from '../../components/offer-gallery/offer-gallery';
 function OfferPage(): JSX.Element {
   const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const currentOffer = useAppSelector(getCurrentOffer);
   const nearOffers = useAppSelector(getNearOffers);
@@ -42,17 +43,21 @@ function OfferPage(): JSX.Element {
   }
 
   const handleFavoriteClick = () => {
+    if (authorizationStatus === AuthorizationStatus.Unknown) {
+      return;
+    }
+
+    if (authorizationStatus !== AuthorizationStatus.Auth) {
+      navigate(AppRoute.Login);
+      return;
+    }
+
     dispatch(changeFavoriteStatus({
       offerId: id,
       status: !currentOffer.isFavorite
-    }))
-      .unwrap()
-      .then(() => {
-        dispatch(fetchOfferAction(id));
-      })
-      .catch(() => {
-        toast.error('Failed to update favorite status');
-      });
+    })).catch(() => {
+      toast.error('Failed to update favorite status');
+    });
   };
 
   const handleReviewSubmit = async (comment: string, rating: number) => {
@@ -65,6 +70,8 @@ function OfferPage(): JSX.Element {
   };
 
   const isAuth = authorizationStatus === AuthorizationStatus.Auth;
+
+  const displayedNearOffers = nearOffers.slice(0, 3);
 
   return (
     <>
@@ -159,7 +166,7 @@ function OfferPage(): JSX.Element {
           <section className="offer__map map">
             <Map
               city={currentOffer.city}
-              offers={[currentOffer, ...nearOffers]}
+              offers={[currentOffer, ...displayedNearOffers]}
               selectedOfferId={currentOffer.id}
             />
           </section>
@@ -168,7 +175,7 @@ function OfferPage(): JSX.Element {
           <section className="near-places places">
             <h2 className="near-places__title">Other places in the neighbourhood</h2>
             <OfferList
-              offers={nearOffers}
+              offers={displayedNearOffers}
               block="near-places"
             />
           </section>

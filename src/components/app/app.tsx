@@ -60,11 +60,8 @@ function App(): JSX.Element {
   const isOffersDataLoading = useAppSelector(getIsOffersDataLoading);
 
   useEffect(() => {
-    dispatch(checkAuthAction())
-      .unwrap()
-      .catch(() => {
-        dispatch(fetchOffers());
-      });
+    dispatch(checkAuthAction());
+    dispatch(fetchOffers());
   }, [dispatch]);
 
   if (authorizationStatus === AuthorizationStatus.Unknown || isOffersDataLoading) {

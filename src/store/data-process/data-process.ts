@@ -105,13 +105,13 @@ export const dataProcessSlice = createSlice({
       .addCase(changeFavoriteStatus.fulfilled, (state, action: PayloadAction<Offer>) => {
         const updatedOffer = action.payload;
 
+        if (state.currentOffer?.id === updatedOffer.id) {
+          state.currentOffer = updatedOffer;
+        }
+
         const offerIndex = state.offers.findIndex((offer) => offer.id === updatedOffer.id);
         if (offerIndex !== -1) {
           state.offers[offerIndex] = updatedOffer;
-        }
-
-        if (state.currentOffer && state.currentOffer.id === updatedOffer.id) {
-          state.currentOffer = updatedOffer;
         }
 
         state.nearOffers = state.nearOffers.map((offer) =>
@@ -122,8 +122,6 @@ export const dataProcessSlice = createSlice({
           const existingIndex = state.favoriteOffers.findIndex((offer) => offer.id === updatedOffer.id);
           if (existingIndex === -1) {
             state.favoriteOffers.push(updatedOffer);
-          } else {
-            state.favoriteOffers[existingIndex] = updatedOffer;
           }
         } else {
           state.favoriteOffers = state.favoriteOffers.filter(
