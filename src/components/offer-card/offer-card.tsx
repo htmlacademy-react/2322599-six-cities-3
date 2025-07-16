@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Link, generatePath, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { changeFavoriteStatus, fetchFavoriteOffers } from '../../store/api-actions';
+import { changeFavoriteStatus } from '../../store/api-actions';
 import { Offer, CardListType } from '../../types/offers';
 import { AppRoute, AuthorizationStatus } from '../../const';
 import classNames from 'classnames';
@@ -69,15 +69,10 @@ function OfferCardComponent({
       status: !isFavorite
     }))
       .unwrap()
-      .then(() => {
-        if (block === 'favorites') {
-          dispatch(fetchFavoriteOffers());
-        }
-      })
       .catch(() => {
         toast.error('Failed to update favorite status');
       });
-  }, [dispatch, id, isFavorite, authorizationStatus, navigate, block]);
+  }, [dispatch, id, isFavorite, authorizationStatus, navigate]);
 
   const cardClass = classNames(
     block === 'favorites' ? 'favorites__card' : `${block}__card`,

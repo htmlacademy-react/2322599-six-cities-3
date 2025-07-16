@@ -8,6 +8,8 @@ import Spinner from '../../components/spinner/spinner';
 import Footer from '../../components/footer/footer';
 import { Link } from 'react-router-dom';
 import { AppRoute, CITIES } from '../../const';
+import { toast } from 'react-toastify';
+import classNames from 'classnames';
 
 function FavoritesPage(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -15,8 +17,14 @@ function FavoritesPage(): JSX.Element {
   const isLoading = useAppSelector(getIsFavoriteOffersLoading);
   const error = useAppSelector(getFavoriteOffersError);
 
+  const isEmpty = favoriteOffers.length === 0;
+
   useEffect(() => {
-    dispatch(fetchFavoriteOffers());
+    dispatch(fetchFavoriteOffers())
+      .unwrap()
+      .catch(() => {
+        toast.error('Failed to load favorite offers. Please try again later.');
+      });
   }, [dispatch]);
 
   const handleRetryClick = (e: React.MouseEvent) => {
@@ -67,14 +75,20 @@ function FavoritesPage(): JSX.Element {
   }
 
   return (
-    <div className="page">
+    <div className={classNames('page', {
+      'page--favorites-empty': isEmpty
+    })}
+    >
       <Helmet>
         <title>6 cities. Your favorites</title>
       </Helmet>
 
-      <main className="page__main page__main--favorites">
+      <main className={classNames('page__main', 'page__main--favorites', {
+        'page__main--favorites-empty': isEmpty
+      })}
+      >
         <div className="page__favorites-container container">
-          {favoriteOffers.length === 0 ? (
+          {isEmpty ? (
             <section className="favorites favorites--empty">
               <h1 className="visually-hidden">Favorites (empty)</h1>
               <div className="favorites__status-wrapper">

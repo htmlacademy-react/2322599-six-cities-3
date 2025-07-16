@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { NameSpace, DEFAULT_CITY } from '../../const';
-import { Offer, FavoriteData } from '../../types/offers';
+import { Offer } from '../../types/offers';
 import { Review } from '../../types/reviews';
 import {
   fetchOffers,
   fetchCommentsAction,
   fetchOfferAction,
   fetchNearOffersAction,
-  updateOfferFavoriteStatus,
+  changeFavoriteStatus,
   fetchFavoriteOffers
 } from '../api-actions';
 
@@ -102,21 +102,34 @@ export const dataProcessSlice = createSlice({
         state.isFavoriteOffersLoading = false;
         state.favoriteOffersError = true;
       })
-      .addCase(updateOfferFavoriteStatus, (state, action: PayloadAction<FavoriteData>) => {
-        const { offerId, status } = action.payload;
+      .addCase(changeFavoriteStatus.fulfilled, (state, action: PayloadAction<Offer>) => {
+        const updatedOffer = action.payload;
 
-        const offerIndex = state.offers.findIndex((offer) => offer.id === offerId);
+        const offerIndex = state.offers.findIndex((offer) => offer.id === updatedOffer.id);
         if (offerIndex !== -1) {
-          state.offers[offerIndex].isFavorite = status;
+          state.offers[offerIndex] = updatedOffer;
         }
 
-        if (state.currentOffer && state.currentOffer.id === offerId) {
-          state.currentOffer.isFavorite = status;
+        if (state.currentOffer && state.currentOffer.id === updatedOffer.id) {
+          state.currentOffer = updatedOffer;
         }
 
         state.nearOffers = state.nearOffers.map((offer) =>
-          offer.id === offerId ? { ...offer, isFavorite: status } : offer
+          offer.id === updatedOffer.id ? updatedOffer : offer
         );
+
+        if (updatedOffer.isFavorite) {
+          const existingIndex = state.favoriteOffers.findIndex((offer) => offer.id === updatedOffer.id);
+          if (existingIndex === -1) {
+            state.favoriteOffers.push(updatedOffer);
+          } else {
+            state.favoriteOffers[existingIndex] = updatedOffer;
+          }
+        } else {
+          state.favoriteOffers = state.favoriteOffers.filter(
+            (offer) => offer.id !== updatedOffer.id
+          );
+        }
       });
   }
 });

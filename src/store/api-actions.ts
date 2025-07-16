@@ -1,16 +1,15 @@
-import { createAsyncThunk, createAction } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosInstance } from 'axios';
 import { APIRoute, AppRoute } from '../const';
 import { saveToken, dropToken, getToken } from '../services/token';
 import { AuthData } from '../types/auth-data';
 import { UserData } from '../types/user-data';
-import { Offer, FavoriteData } from '../types/offers';
+import { Offer } from '../types/offers';
 import { toast } from 'react-toastify';
 import { Review } from '../types/reviews';
 import { redirectToRoute } from './redirect-action';
 import { AppDispatch, State } from '../types/state';
-
-export const updateOfferFavoriteStatus = createAction<FavoriteData>('offers/updateFavoriteStatus');
+import { FavoriteData } from '../types/offers';
 
 export const fetchOffers = createAsyncThunk<Offer[], undefined, {
   dispatch: AppDispatch;
@@ -89,22 +88,33 @@ export const fetchFavoriteOffers = createAsyncThunk<Offer[], undefined, {
   extra: AxiosInstance;
 }>(
   'data/fetchFavoriteOffers',
-  async (_arg, { extra: api }) => {
-    const { data } = await api.get<Offer[]>(APIRoute.Favorite);
-    return data;
+  async (_arg, { extra: api, rejectWithValue }) => {
+    try {
+      const { data } = await api.get<Offer[]>(APIRoute.Favorite);
+      return data;
+    } catch (error) {
+      toast.error('Failed to load favorite offers');
+      return rejectWithValue('Server error');
+    }
   }
 );
 
-export const changeFavoriteStatus = createAsyncThunk<void, FavoriteData, {
+export const changeFavoriteStatus = createAsyncThunk<Offer, FavoriteData, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
 }>(
   'data/changeFavoriteStatus',
-  async ({ offerId, status }, { extra: api }) => {
-    await api.post<Offer>(
-      `${APIRoute.Favorite}/${offerId}/${status ? 1 : 0}`
-    );
+  async ({ offerId, status }, { extra: api, rejectWithValue }) => {
+    try {
+      const { data } = await api.post<Offer>(
+        `${APIRoute.Favorite}/${offerId}/${status ? 1 : 0}`
+      );
+      return data;
+    } catch (error) {
+      toast.error('Failed to update favorite status');
+      return rejectWithValue('Failed to update favorite status');
+    }
   }
 );
 
