@@ -14,6 +14,7 @@ import Layout from '../layout/layout';
 import Spinner from '../spinner/spinner';
 import { getAuthorizationStatus } from '../../store/user-process/selectors';
 import { getIsOffersDataLoading } from '../../store/data-process/selectors';
+import ServerErrorPage from '../../pages/server-error-page/server-error-page';
 
 function AppContent() {
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
@@ -45,6 +46,7 @@ function AppContent() {
                 : <LoginPage />
             }
           />
+          <Route path="/server-error" element={<ServerErrorPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
@@ -58,8 +60,11 @@ function App(): JSX.Element {
   const isOffersDataLoading = useAppSelector(getIsOffersDataLoading);
 
   useEffect(() => {
-    dispatch(checkAuthAction());
-    dispatch(fetchOffers());
+    dispatch(checkAuthAction())
+      .unwrap()
+      .catch(() => {
+        dispatch(fetchOffers());
+      });
   }, [dispatch]);
 
   if (authorizationStatus === AuthorizationStatus.Unknown || isOffersDataLoading) {

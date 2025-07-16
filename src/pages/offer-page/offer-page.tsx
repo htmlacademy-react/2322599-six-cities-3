@@ -45,7 +45,14 @@ function OfferPage(): JSX.Element {
     dispatch(changeFavoriteStatus({
       offerId: id,
       status: !currentOffer.isFavorite
-    }));
+    }))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchOfferAction(id));
+      })
+      .catch(() => {
+        toast.error('Failed to update favorite status');
+      });
   };
 
   const handleReviewSubmit = async (comment: string, rating: number) => {

@@ -18,7 +18,11 @@ function Layout(): JSX.Element {
   const handleSignOutClick = (e: React.MouseEvent) => {
     e.preventDefault();
     dispatch(logoutAction())
-      .then(() => navigate(AppRoute.Root))
+      .unwrap()
+      .then(() => {
+        navigate(AppRoute.Root);
+        toast.info('Logged out successfully');
+      })
       .catch(() => {
         toast.error('Logout failed. Please try again.');
       });

@@ -48,6 +48,9 @@ export const dataProcessSlice = createSlice({
     changeCity: (state, action: PayloadAction<string>) => {
       state.currentCityName = action.payload;
     },
+    resetOffersError: (state) => {
+      state.offersError = false;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -118,4 +121,4 @@ export const dataProcessSlice = createSlice({
   }
 });
 
-export const { changeCity } = dataProcessSlice.actions;
+export const { changeCity, resetOffersError } = dataProcessSlice.actions;

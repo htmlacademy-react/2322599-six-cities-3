@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react';
 import { Link, generatePath, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { changeFavoriteStatus } from '../../store/api-actions';
+import { changeFavoriteStatus, fetchFavoriteOffers } from '../../store/api-actions';
 import { Offer, CardListType } from '../../types/offers';
 import { AppRoute, AuthorizationStatus } from '../../const';
 import classNames from 'classnames';
 import './offer-card.css';
+import { toast } from 'react-toastify';
 
 const getTypeName = (type: string) => {
   switch (type) {
@@ -66,8 +67,17 @@ function OfferCardComponent({
     dispatch(changeFavoriteStatus({
       offerId: id,
       status: !isFavorite
-    }));
-  }, [dispatch, id, isFavorite, authorizationStatus, navigate]);
+    }))
+      .unwrap()
+      .then(() => {
+        if (block === 'favorites') {
+          dispatch(fetchFavoriteOffers());
+        }
+      })
+      .catch(() => {
+        toast.error('Failed to update favorite status');
+      });
+  }, [dispatch, id, isFavorite, authorizationStatus, navigate, block]);
 
   const cardClass = classNames(
     block === 'favorites' ? 'favorites__card' : `${block}__card`,

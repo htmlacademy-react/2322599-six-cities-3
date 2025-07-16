@@ -6,10 +6,12 @@ import OfferList from '../../components/offer-list/offer-list';
 import { CitiesList } from '../../components/cities-list/cities-list';
 import { SortingOptions } from '../../components/sorting-options/sorting-options';
 import { getCurrentCityName, getCurrentCityOffers, getOffersError } from '../../store/data-process/selectors';
-import { changeCity } from '../../store/data-process/data-process';
+import { changeCity, resetOffersError } from '../../store/data-process/data-process';
 import { CityName, CITIES, DEFAULT_CITY } from '../../const';
 import type { SortOption } from '../../components/sorting-options/sorting-options';
 import MainEmpty from '../main-page/main-empty';
+import { fetchOffers } from '../../store/api-actions';
+import { toast } from 'react-toastify';
 
 function MainPage(): JSX.Element {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
@@ -33,6 +35,12 @@ function MainPage(): JSX.Element {
       dispatch(changeCity(DEFAULT_CITY));
     }
   }, [dispatch, currentCityName]);
+
+  useEffect(() => {
+    if (offersError) {
+      toast.error('Failed to load offers. Please try again later.');
+    }
+  }, [offersError]);
 
   const sortedOffers = useMemo(() => {
     const offersCopy = [...currentCityOffers];
@@ -76,6 +84,11 @@ function MainPage(): JSX.Element {
     setIsSortMenuOpen(!isSortMenuOpen);
   }, [isSortMenuOpen]);
 
+  const handleRetryClick = useCallback(() => {
+    dispatch(resetOffersError());
+    dispatch(fetchOffers());
+  }, [dispatch]);
+
   const currentCity = currentCityOffers.length > 0
     ? currentCityOffers[0].city
     : {
@@ -86,6 +99,34 @@ function MainPage(): JSX.Element {
         zoom: 12
       }
     };
+
+  if (offersError) {
+    return (
+      <div className="page page--gray page--main">
+        <main className="page__main page__main--index page__main--index-empty">
+          <div className="cities">
+            <div className="cities__places-container cities__places-container--empty container">
+              <section className="cities__no-places">
+                <div className="cities__status-wrapper tabs__content">
+                  <b className="cities__status">Server Error</b>
+                  <p className="cities__status-description">
+                    Failed to load offers. Please try again later.
+                  </p>
+                  <button
+                    className="cities__retry-button button"
+                    onClick={handleRetryClick}
+                  >
+                    Try again
+                  </button>
+                </div>
+              </section>
+              <div className="cities__right-section"></div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <>
