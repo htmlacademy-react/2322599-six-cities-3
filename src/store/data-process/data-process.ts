@@ -8,7 +8,8 @@ import {
   fetchOfferAction,
   fetchNearOffersAction,
   changeFavoriteStatus,
-  fetchFavoriteOffers
+  fetchFavoriteOffers,
+  postCommentAction
 } from '../api-actions';
 
 type DataProcessState = {
@@ -50,7 +51,7 @@ export const dataProcessSlice = createSlice({
     },
     resetOffersError: (state) => {
       state.offersError = false;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -128,6 +129,16 @@ export const dataProcessSlice = createSlice({
             (offer) => offer.id !== updatedOffer.id
           );
         }
+      })
+      .addCase(postCommentAction.pending, (state) => {
+        state.isCommentsLoading = true;
+      })
+      .addCase(postCommentAction.fulfilled, (state, action: PayloadAction<Review>) => {
+        state.comments = [action.payload, ...state.comments];
+        state.isCommentsLoading = false;
+      })
+      .addCase(postCommentAction.rejected, (state) => {
+        state.isCommentsLoading = false;
       });
   }
 });

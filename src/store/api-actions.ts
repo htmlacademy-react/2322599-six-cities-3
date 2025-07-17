@@ -129,20 +129,15 @@ export const fetchCommentsAction = createAsyncThunk<Review[], string, {
   }
 );
 
-export const postCommentAction = createAsyncThunk<void, { offerId: string; comment: string; rating: number }, {
+export const postCommentAction = createAsyncThunk<Review, { offerId: string; comment: string; rating: number }, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
 }>(
   'data/postComment',
-  async ({ offerId, comment, rating }, { dispatch, extra: api, rejectWithValue }) => {
-    try {
-      await api.post(`${APIRoute.Comments}/${offerId}`, { comment, rating });
-      dispatch(fetchCommentsAction(offerId));
-    } catch (error) {
-      toast.error('Failed to post comment. Please try again later.');
-      return rejectWithValue('Server error');
-    }
+  async ({ offerId, comment, rating }, { extra: api }) => {
+    const { data } = await api.post<Review>(`${APIRoute.Comments}/${offerId}`, { comment, rating });
+    return data;
   }
 );
 

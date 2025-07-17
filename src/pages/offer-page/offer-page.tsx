@@ -8,7 +8,7 @@ import { getAuthorizationStatus } from '../../store/user-process/selectors';
 import NotFoundPage from '../not-found-page/not-found-page';
 import Spinner from '../../components/spinner/spinner';
 import { useEffect } from 'react';
-import { changeFavoriteStatus, fetchCommentsAction, postCommentAction, fetchOfferAction, fetchNearOffersAction } from '../../store/api-actions';
+import { changeFavoriteStatus, postCommentAction, fetchOfferAction, fetchNearOffersAction, fetchCommentsAction } from '../../store/api-actions';
 import { AuthorizationStatus, AppRoute } from '../../const';
 import { toast } from 'react-toastify';
 import OfferReviews from '../../components/offer-reviews/offer-reviews';
@@ -62,7 +62,12 @@ function OfferPage(): JSX.Element {
 
   const handleReviewSubmit = async (comment: string, rating: number) => {
     try {
-      await dispatch(postCommentAction({ offerId: id, comment, rating })).unwrap();
+      await dispatch(postCommentAction({
+        offerId: id,
+        comment,
+        rating
+      })).unwrap();
+
       toast.success('Comment successfully posted!');
     } catch {
       toast.error('Failed to post comment');
