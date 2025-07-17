@@ -5,7 +5,6 @@ import { changeFavoriteStatus } from '../../store/api-actions';
 import { Offer, CardListType } from '../../types/offers';
 import { AppRoute, AuthorizationStatus } from '../../const';
 import classNames from 'classnames';
-import './offer-card.css';
 import { toast } from 'react-toastify';
 import { getAuthorizationStatus } from '../../store/user-process/selectors';
 
@@ -52,9 +51,7 @@ function OfferCardComponent({
     previewImage,
   } = offer;
 
-  const roundedRating = Math.round(rating);
-  const widthPercent = roundedRating * 20;
-  const ratingLineClass = `rating__stars-${widthPercent}`;
+  const widthPercent = `${Math.round(rating) * 20}%`;
 
   const handleFavoriteClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -132,8 +129,8 @@ function OfferCardComponent({
         </div>
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">
-            <span className={ratingLineClass}></span>
-            <span className="visually-hidden">Rating: {roundedRating} stars</span>
+            <span style={{ width: widthPercent }}></span>
+            <span className="visually-hidden">Rating: {Math.round(rating)} stars</span>
           </div>
         </div>
         <h2 className="place-card__name">

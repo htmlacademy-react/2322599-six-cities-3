@@ -70,8 +70,9 @@ function OfferPage(): JSX.Element {
   };
 
   const isAuth = authorizationStatus === AuthorizationStatus.Auth;
-
   const displayedNearOffers = nearOffers.slice(0, 3);
+
+  const ratingWidth = `${Math.round(currentOffer.rating) * 20}%`;
 
   return (
     <>
@@ -105,7 +106,7 @@ function OfferPage(): JSX.Element {
               </div>
               <div className="offer__rating rating">
                 <div className="offer__stars rating__stars">
-                  <span style={{ width: `${currentOffer.rating * 20}%` }} />
+                  <span style={{ width: ratingWidth }} />
                   <span className="visually-hidden">Rating</span>
                 </div>
                 <span className="offer__rating-value rating__value">{currentOffer.rating}</span>

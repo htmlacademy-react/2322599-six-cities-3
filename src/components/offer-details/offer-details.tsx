@@ -14,6 +14,8 @@ function OfferDetails({ offer }: OfferDetailsProps): JSX.Element {
   const navigate = useNavigate();
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
 
+  const ratingWidth = `${Math.round(offer.rating) * 20}%`;
+
   const handleFavoriteClick = () => {
     if (authorizationStatus === AuthorizationStatus.Unknown) {
       return;
@@ -64,7 +66,7 @@ function OfferDetails({ offer }: OfferDetailsProps): JSX.Element {
           </div>
           <div className="offer__rating rating">
             <div className="offer__stars rating__stars">
-              <span style={{ width: `${offer.rating * 20}%` }} />
+              <span style={{ width: ratingWidth }} />
               <span className="visually-hidden">Rating</span>
             </div>
             <span className="offer__rating-value rating__value">{offer.rating}</span>

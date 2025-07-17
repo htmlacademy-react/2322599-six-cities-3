@@ -10,7 +10,7 @@ function ReviewItem({ review }: ReviewItemProps): JSX.Element {
     year: 'numeric'
   });
 
-  const ratingPercent = Math.min(review.rating, 5) * 20;
+  const ratingPercent = `${Math.round(review.rating) * 20}%`;
 
   return (
     <li className="reviews__item">
@@ -31,7 +31,7 @@ function ReviewItem({ review }: ReviewItemProps): JSX.Element {
       <div className="reviews__info">
         <div className="reviews__rating rating">
           <div className="reviews__stars rating__stars">
-            <span style={{ width: `${ratingPercent}%` }} />
+            <span style={{ width: ratingPercent }} />
             <span className="visually-hidden">Rating</span>
           </div>
         </div>
