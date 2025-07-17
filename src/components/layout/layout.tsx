@@ -24,7 +24,7 @@ function Layout({ pageType }: LayoutProps): JSX.Element {
     dispatch(logoutAction())
       .unwrap()
       .then(() => {
-        navigate(AppRoute.Login); // Исправлено: Root → Login
+        navigate(AppRoute.Login);
         toast.info('Logged out successfully');
       })
       .catch(() => {
@@ -51,61 +51,63 @@ function Layout({ pageType }: LayoutProps): JSX.Element {
         <link rel="icon" href="/img/favicon.ico" />
       </Helmet>
 
-      <header className="header">
-        <div className="container">
-          <div className="header__wrapper">
-            <div className="header__left">
-              <Logo />
+      {pageType !== 'login' && (
+        <header className="header">
+          <div className="container">
+            <div className="header__wrapper">
+              <div className="header__left">
+                <Logo />
+              </div>
+              {authorizationStatus === AuthorizationStatus.Auth ? (
+                <nav className="header__nav">
+                  <ul className="header__nav-list">
+                    <li className="header__nav-item user">
+                      <Link
+                        className="header__nav-link header__nav-link--profile"
+                        to={AppRoute.Favorites}
+                      >
+                        {userData?.avatarUrl && (
+                          <div
+                            className="header__avatar-wrapper user__avatar-wrapper"
+                            style={{ backgroundImage: `url(${userData.avatarUrl})` }}
+                          />
+                        )}
+                        <span className="header__user-name user__name">
+                          {userData?.email || ''}
+                        </span>
+                        <span className="header__favorite-count">{favoriteOffers.length}</span>
+                      </Link>
+                    </li>
+                    <li className="header__nav-item">
+                      <Link
+                        className="header__nav-link"
+                        to="#"
+                        onClick={handleSignOutClick}
+                      >
+                        <span className="header__signout">Sign out</span>
+                      </Link>
+                    </li>
+                  </ul>
+                </nav>
+              ) : (
+                <nav className="header__nav">
+                  <ul className="header__nav-list">
+                    <li className="header__nav-item user">
+                      <Link
+                        className="header__nav-link header__nav-link--profile"
+                        to={AppRoute.Login}
+                      >
+                        <div className="header__avatar-wrapper user__avatar-wrapper"></div>
+                        <span className="header__login">Sign in</span>
+                      </Link>
+                    </li>
+                  </ul>
+                </nav>
+              )}
             </div>
-            {authorizationStatus === AuthorizationStatus.Auth ? (
-              <nav className="header__nav">
-                <ul className="header__nav-list">
-                  <li className="header__nav-item user">
-                    <Link
-                      className="header__nav-link header__nav-link--profile"
-                      to={AppRoute.Favorites}
-                    >
-                      {userData?.avatarUrl && (
-                        <div
-                          className="header__avatar-wrapper user__avatar-wrapper"
-                          style={{ backgroundImage: `url(${userData.avatarUrl})` }}
-                        />
-                      )}
-                      <span className="header__user-name user__name">
-                        {userData?.email || ''}
-                      </span>
-                      <span className="header__favorite-count">{favoriteOffers.length}</span>
-                    </Link>
-                  </li>
-                  <li className="header__nav-item">
-                    <Link
-                      className="header__nav-link"
-                      to="#"
-                      onClick={handleSignOutClick}
-                    >
-                      <span className="header__signout">Sign out</span>
-                    </Link>
-                  </li>
-                </ul>
-              </nav>
-            ) : (
-              <nav className="header__nav">
-                <ul className="header__nav-list">
-                  <li className="header__nav-item user">
-                    <Link
-                      className="header__nav-link header__nav-link--profile"
-                      to={AppRoute.Login}
-                    >
-                      <div className="header__avatar-wrapper user__avatar-wrapper"></div>
-                      <span className="header__login">Sign in</span>
-                    </Link>
-                  </li>
-                </ul>
-              </nav>
-            )}
           </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       <Outlet />
     </div>
