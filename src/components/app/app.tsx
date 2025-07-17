@@ -23,8 +23,11 @@ function AppContent() {
     <HelmetProvider>
       <BrowserRouter>
         <Routes>
-          <Route element={<Layout />}>
+          <Route element={<Layout pageType="main" />}>
             <Route path={AppRoute.Root} element={<MainPage />} />
+          </Route>
+
+          <Route element={<Layout pageType="favorites" />}>
             <Route
               path={AppRoute.Favorites}
               element={
@@ -33,21 +36,27 @@ function AppContent() {
                 </PrivateRoute>
               }
             />
+          </Route>
+
+          <Route element={<Layout pageType="login" />}>
+            <Route
+              path={AppRoute.Login}
+              element={
+                authorizationStatus === AuthorizationStatus.Auth
+                  ? <Navigate to={AppRoute.Root} />
+                  : <LoginPage />
+              }
+            />
+          </Route>
+
+          <Route element={<Layout />}>
             <Route
               path={generatePath(AppRoute.Offer, { id: ':id' })}
               element={<OfferPage />}
             />
+            <Route path="/server-error" element={<ServerErrorPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
-          <Route
-            path={AppRoute.Login}
-            element={
-              authorizationStatus === AuthorizationStatus.Auth
-                ? <Navigate to={AppRoute.Root} />
-                : <LoginPage />
-            }
-          />
-          <Route path="/server-error" element={<ServerErrorPage />} />
-          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
     </HelmetProvider>

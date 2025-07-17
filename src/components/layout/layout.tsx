@@ -8,7 +8,11 @@ import { logoutAction } from '../../store/api-actions';
 import { getAuthorizationStatus, getUserData } from '../../store/user-process/selectors';
 import { getFavoriteOffers } from '../../store/data-process/selectors';
 
-function Layout(): JSX.Element {
+type LayoutProps = {
+  pageType?: 'main' | 'login' | 'offer' | 'favorites';
+};
+
+function Layout({ pageType }: LayoutProps): JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
@@ -20,7 +24,7 @@ function Layout(): JSX.Element {
     dispatch(logoutAction())
       .unwrap()
       .then(() => {
-        navigate(AppRoute.Root);
+        navigate(AppRoute.Login); // Исправлено: Root → Login
         toast.info('Logged out successfully');
       })
       .catch(() => {
@@ -28,8 +32,20 @@ function Layout(): JSX.Element {
       });
   };
 
+  const pageClasses = ['page'];
+
+  if (pageType === 'main') {
+    pageClasses.push('page--gray', 'page--main');
+  } else if (pageType === 'login') {
+    pageClasses.push('page--gray', 'page--login');
+  } else if (pageType === 'favorites') {
+    pageClasses.push('page--gray');
+  } else if (pageType !== 'offer') {
+    pageClasses.push('page--gray');
+  }
+
   return (
-    <div className="page page--gray page--main">
+    <div className={pageClasses.join(' ')}>
       <Helmet>
         <title>6 cities</title>
         <link rel="icon" href="/img/favicon.ico" />
@@ -56,7 +72,7 @@ function Layout(): JSX.Element {
                         />
                       )}
                       <span className="header__user-name user__name">
-                        {userData?.name || ''}
+                        {userData?.email || ''}
                       </span>
                       <span className="header__favorite-count">{favoriteOffers.length}</span>
                     </Link>
