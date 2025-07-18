@@ -12,6 +12,13 @@ type LayoutProps = {
   pageType?: 'main' | 'login' | 'offer' | 'favorites';
 };
 
+const PAGE_TYPE_CLASSES: Record<string, string[]> = {
+  main: ['page--gray', 'page--main'],
+  login: ['page--gray', 'page--login'],
+  favorites: ['page--gray'],
+  offer: [],
+};
+
 function Layout({ pageType }: LayoutProps): JSX.Element {
   const dispatch = useAppDispatch();
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
@@ -31,14 +38,9 @@ function Layout({ pageType }: LayoutProps): JSX.Element {
   };
 
   const pageClasses = ['page'];
-
-  if (pageType === 'main') {
-    pageClasses.push('page--gray', 'page--main');
-  } else if (pageType === 'login') {
-    pageClasses.push('page--gray', 'page--login');
-  } else if (pageType === 'favorites') {
-    pageClasses.push('page--gray');
-  } else if (pageType !== 'offer') {
+  if (pageType) {
+    pageClasses.push(...(PAGE_TYPE_CLASSES[pageType] || ['page--gray']));
+  } else {
     pageClasses.push('page--gray');
   }
 
