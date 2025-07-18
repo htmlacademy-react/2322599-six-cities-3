@@ -66,10 +66,9 @@ function MapComponent({ city, offers, selectedOfferId }: MapProps): JSX.Element 
   return <div style={{ height: '100%' }} ref={mapRef} />;
 }
 
-const areEqual = (prevProps: MapProps, nextProps: MapProps) => (
+const areEqual = (prevProps: MapProps, nextProps: MapProps) =>
   prevProps.city.name === nextProps.city.name &&
   prevProps.offers.length === nextProps.offers.length &&
-  prevProps.selectedOfferId === nextProps.selectedOfferId
-);
+  prevProps.selectedOfferId === nextProps.selectedOfferId;
 
 export const Map = memo(MapComponent, areEqual);

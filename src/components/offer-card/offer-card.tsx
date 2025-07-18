@@ -1,10 +1,12 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Link, generatePath, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { changeFavoriteStatus } from '../../store/api-actions';
 import { Offer, CardListType } from '../../types/offers';
 import { AppRoute, AuthorizationStatus } from '../../const';
-import './offer-card.css';
+import classNames from 'classnames';
+import { toast } from 'react-toastify';
+import { getAuthorizationStatus } from '../../store/user-process/selectors';
 
 const getTypeName = (type: string) => {
   switch (type) {
@@ -36,7 +38,8 @@ function OfferCardComponent({
 }: OfferCardProps) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const authorizationStatus = useAppSelector((state) => state.USER.authorizationStatus);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  const [isFavorite, setIsFavorite] = useState(offer.isFavorite);
 
   const {
     id,
@@ -44,33 +47,52 @@ function OfferCardComponent({
     type,
     price,
     isPremium,
-    isFavorite,
     rating,
     previewImage,
   } = offer;
 
-  const roundedRating = Math.round(rating);
-  const widthPercent = roundedRating * 20;
-  const ratingLineClass = `rating__stars-${widthPercent}`;
+  const widthPercent = `${Math.round(rating) * 20}%`;
 
   const handleFavoriteClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (authorizationStatus === AuthorizationStatus.Unknown) {
+      return;
+    }
 
     if (authorizationStatus !== AuthorizationStatus.Auth) {
       navigate(AppRoute.Login);
       return;
     }
 
+    const originalIsFavorite = isFavorite;
+    setIsFavorite(!isFavorite);
+
     dispatch(changeFavoriteStatus({
       offerId: id,
       status: !isFavorite
-    }));
+    }))
+      .unwrap()
+      .catch(() => {
+        toast.error('Failed to update favorite status');
+        setIsFavorite(originalIsFavorite);
+      });
   }, [dispatch, id, isFavorite, authorizationStatus, navigate]);
+
+  let cardClass: string;
+
+  if (block === 'favorites') {
+    cardClass = classNames('favorites__card', 'place-card');
+  } else if (block === 'near-places') {
+    cardClass = classNames('near-places__card', 'place-card');
+  } else {
+    cardClass = classNames(`${block}__card`, 'place-card');
+  }
 
   return (
     <article
-      className={`${block}__card place-card`}
+      className={cardClass}
       onMouseEnter={() => onMouseEnter?.(id)}
       onMouseLeave={() => onMouseLeave?.()}
     >
@@ -84,8 +106,8 @@ function OfferCardComponent({
           <img
             className="place-card__image"
             src={previewImage}
-            width="260"
-            height="200"
+            width={block === 'favorites' ? '150' : '260'}
+            height={block === 'favorites' ? '110' : '200'}
             alt="Place image"
           />
         </Link>
@@ -111,8 +133,8 @@ function OfferCardComponent({
         </div>
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">
-            <span className={ratingLineClass}></span>
-            <span className="visually-hidden">Rating: {roundedRating} stars</span>
+            <span style={{ width: widthPercent }}></span>
+            <span className="visually-hidden">Rating: {Math.round(rating)} stars</span>
           </div>
         </div>
         <h2 className="place-card__name">

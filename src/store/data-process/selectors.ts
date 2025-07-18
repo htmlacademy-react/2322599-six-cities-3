@@ -2,6 +2,7 @@ import { State } from '../../types/state';
 import { NameSpace } from '../../const';
 import { Offer } from '../../types/offers';
 import { Review } from '../../types/reviews';
+import { createSelector } from '@reduxjs/toolkit';
 
 export const getCurrentCityName = (state: State): string => state[NameSpace.Data].currentCityName;
 export const getOffers = (state: State): Offer[] => state[NameSpace.Data].offers;
@@ -14,9 +15,9 @@ export const getNearOffers = (state: State): Offer[] => state[NameSpace.Data].ne
 export const getIsOfferLoading = (state: State): boolean => state[NameSpace.Data].isOfferLoading;
 export const getFavoriteOffers = (state: State): Offer[] => state[NameSpace.Data].favoriteOffers;
 export const getIsFavoriteOffersLoading = (state: State): boolean => state[NameSpace.Data].isFavoriteOffersLoading;
+export const getFavoriteOffersError = (state: State): boolean => state[NameSpace.Data].favoriteOffersError;
 
-export const getCurrentCityOffers = (state: State): Offer[] => {
-  const cityName = getCurrentCityName(state);
-  const offers = getOffers(state);
-  return offers.filter((offer) => offer.city.name === cityName);
-};
+export const getCurrentCityOffers = createSelector(
+  [getCurrentCityName, getOffers],
+  (cityName, offers) => offers.filter((offer) => offer.city.name === cityName)
+);

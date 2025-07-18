@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Offer } from '../../types/offers';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { changeFavoriteStatus } from '../../store/api-actions';
 import { useNavigate } from 'react-router-dom';
 import { AppRoute, AuthorizationStatus } from '../../const';
+import { getAuthorizationStatus } from '../../store/user-process/selectors';
 
 type OfferDetailsProps = {
   offer: Offer;
@@ -11,18 +13,32 @@ type OfferDetailsProps = {
 function OfferDetails({ offer }: OfferDetailsProps): JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const authorizationStatus = useAppSelector((state) => state.USER.authorizationStatus);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  const [isFavorite, setIsFavorite] = useState(offer.isFavorite);
+
+  const ratingWidth = `${Math.round(offer.rating) * 20}%`;
 
   const handleFavoriteClick = () => {
+    if (authorizationStatus === AuthorizationStatus.Unknown) {
+      return;
+    }
+
     if (authorizationStatus !== AuthorizationStatus.Auth) {
       navigate(AppRoute.Login);
       return;
     }
 
+    const originalIsFavorite = isFavorite;
+    setIsFavorite(!isFavorite);
+
     dispatch(changeFavoriteStatus({
       offerId: offer.id,
-      status: !offer.isFavorite
-    }));
+      status: !isFavorite
+    }))
+      .unwrap()
+      .catch(() => {
+        setIsFavorite(originalIsFavorite);
+      });
   };
 
   return (
@@ -47,7 +63,7 @@ function OfferDetails({ offer }: OfferDetailsProps): JSX.Element {
           <div className="offer__name-wrapper">
             <h1 className="offer__name">{offer.title}</h1>
             <button
-              className={`offer__bookmark-button button ${offer.isFavorite ? 'offer__bookmark-button--active' : ''}`}
+              className={`offer__bookmark-button button ${isFavorite ? 'offer__bookmark-button--active' : ''}`}
               type="button"
               onClick={handleFavoriteClick}
             >
@@ -59,7 +75,7 @@ function OfferDetails({ offer }: OfferDetailsProps): JSX.Element {
           </div>
           <div className="offer__rating rating">
             <div className="offer__stars rating__stars">
-              <span style={{ width: `${offer.rating * 20}%` }} />
+              <span style={{ width: ratingWidth }} />
               <span className="visually-hidden">Rating</span>
             </div>
             <span className="offer__rating-value rating__value">{offer.rating}</span>

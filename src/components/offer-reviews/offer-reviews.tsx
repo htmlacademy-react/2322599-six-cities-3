@@ -1,6 +1,7 @@
 import { Review } from '../../types/reviews';
 import ReviewsList from '../reviews-list/reviews-list';
 import ReviewForm from '../review-form/review-form';
+import { useMemo } from 'react';
 
 type OfferReviewsProps = {
   reviews: Review[];
@@ -10,12 +11,17 @@ type OfferReviewsProps = {
 };
 
 function OfferReviews({ reviews, isCommentsLoading, isAuth, onReviewSubmit }: OfferReviewsProps): JSX.Element {
+  const sortedAndLimitedReviews = useMemo(() =>
+    [...reviews]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 10), [reviews]);
+
   return (
     <section className="offer__reviews reviews">
       <h2 className="reviews__title">
         Reviews · <span className="reviews__amount">{reviews.length}</span>
       </h2>
-      {!isCommentsLoading && <ReviewsList reviews={reviews} />}
+      {!isCommentsLoading && <ReviewsList reviews={sortedAndLimitedReviews} />}
       {isAuth && <ReviewForm onSubmit={onReviewSubmit} />}
     </section>
   );

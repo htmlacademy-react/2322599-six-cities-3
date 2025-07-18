@@ -1,23 +1,23 @@
 import { Helmet } from 'react-helmet-async';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { Map } from '../../components/map/map';
-import ReviewForm from '../../components/review-form/review-form';
-import ReviewsList from '../../components/reviews-list/reviews-list';
 import OfferList from '../../components/offer-list/offer-list';
 import { getComments, getIsCommentsLoading, getCurrentOffer, getNearOffers, getIsOfferLoading } from '../../store/data-process/selectors';
 import { getAuthorizationStatus } from '../../store/user-process/selectors';
 import NotFoundPage from '../not-found-page/not-found-page';
 import Spinner from '../../components/spinner/spinner';
 import { useEffect } from 'react';
-import { changeFavoriteStatus, fetchCommentsAction, postCommentAction, fetchOfferAction, fetchNearOffersAction } from '../../store/api-actions';
-import { AuthorizationStatus } from '../../const';
+import { changeFavoriteStatus, postCommentAction, fetchOfferAction, fetchNearOffersAction, fetchCommentsAction } from '../../store/api-actions';
+import { AuthorizationStatus, AppRoute } from '../../const';
 import { toast } from 'react-toastify';
+import OfferReviews from '../../components/offer-reviews/offer-reviews';
 import { OfferGallery } from '../../components/offer-gallery/offer-gallery';
 
 function OfferPage(): JSX.Element {
   const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const currentOffer = useAppSelector(getCurrentOffer);
   const nearOffers = useAppSelector(getNearOffers);
@@ -43,15 +43,31 @@ function OfferPage(): JSX.Element {
   }
 
   const handleFavoriteClick = () => {
+    if (authorizationStatus === AuthorizationStatus.Unknown) {
+      return;
+    }
+
+    if (authorizationStatus !== AuthorizationStatus.Auth) {
+      navigate(AppRoute.Login);
+      return;
+    }
+
     dispatch(changeFavoriteStatus({
       offerId: id,
       status: !currentOffer.isFavorite
-    }));
+    })).catch(() => {
+      toast.error('Failed to update favorite status');
+    });
   };
 
   const handleReviewSubmit = async (comment: string, rating: number) => {
     try {
-      await dispatch(postCommentAction({ offerId: id, comment, rating })).unwrap();
+      await dispatch(postCommentAction({
+        offerId: id,
+        comment,
+        rating
+      })).unwrap();
+
       toast.success('Comment successfully posted!');
     } catch {
       toast.error('Failed to post comment');
@@ -59,6 +75,9 @@ function OfferPage(): JSX.Element {
   };
 
   const isAuth = authorizationStatus === AuthorizationStatus.Auth;
+  const displayedNearOffers = nearOffers.slice(0, 3);
+
+  const ratingWidth = `${Math.round(currentOffer.rating) * 20}%`;
 
   return (
     <>
@@ -92,7 +111,7 @@ function OfferPage(): JSX.Element {
               </div>
               <div className="offer__rating rating">
                 <div className="offer__stars rating__stars">
-                  <span style={{ width: `${currentOffer.rating * 20}%` }} />
+                  <span style={{ width: ratingWidth }} />
                   <span className="visually-hidden">Rating</span>
                 </div>
                 <span className="offer__rating-value rating__value">{currentOffer.rating}</span>
@@ -142,19 +161,18 @@ function OfferPage(): JSX.Element {
                 </div>
               </div>
 
-              <section className="offer__reviews reviews">
-                <h2 className="reviews__title">
-                  Reviews · <span className="reviews__amount">{comments.length}</span>
-                </h2>
-                {!isCommentsLoading && <ReviewsList reviews={comments} />}
-                {isAuth && <ReviewForm onSubmit={handleReviewSubmit} />}
-              </section>
+              <OfferReviews
+                reviews={comments}
+                isCommentsLoading={isCommentsLoading}
+                isAuth={isAuth}
+                onReviewSubmit={handleReviewSubmit}
+              />
             </div>
           </div>
           <section className="offer__map map">
             <Map
               city={currentOffer.city}
-              offers={[currentOffer, ...nearOffers]}
+              offers={[currentOffer, ...displayedNearOffers]}
               selectedOfferId={currentOffer.id}
             />
           </section>
@@ -163,7 +181,7 @@ function OfferPage(): JSX.Element {
           <section className="near-places places">
             <h2 className="near-places__title">Other places in the neighbourhood</h2>
             <OfferList
-              offers={nearOffers}
+              offers={displayedNearOffers}
               block="near-places"
             />
           </section>

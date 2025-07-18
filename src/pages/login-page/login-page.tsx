@@ -1,18 +1,29 @@
-import { useEffect, useRef, FormEvent } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { loginAction } from '../../store/api-actions';
-import { AppRoute, AuthorizationStatus } from '../../const';
+import { AppRoute, AuthorizationStatus, CITIES, DEFAULT_CITY } from '../../const';
 import { getAuthorizationStatus } from '../../store/user-process/selectors';
 import Logo from '../../components/logo/logo';
+import { changeCity } from '../../store/data-process/data-process';
 
 function LoginPage(): JSX.Element {
-  const emailRef = useRef<HTMLInputElement | null>(null);
-  const passwordRef = useRef<HTMLInputElement | null>(null);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [randomCity, setRandomCity] = useState<typeof CITIES[number]>(DEFAULT_CITY);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
+
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * CITIES.length);
+    setRandomCity(CITIES[randomIndex]);
+  }, []);
 
   useEffect(() => {
     if (authorizationStatus === AuthorizationStatus.Auth) {
@@ -20,15 +31,37 @@ function LoginPage(): JSX.Element {
     }
   }, [authorizationStatus, navigate]);
 
-  const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
+  const validatePassword = (password: string): boolean => (
+    /[a-zA-Z]/.test(password) && /\d/.test(password)
+  );
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const handleSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (emailRef.current !== null && passwordRef.current !== null) {
-      dispatch(loginAction({
-        email: emailRef.current.value,
-        password: passwordRef.current.value
-      }));
+    if (!validatePassword(formData.password)) {
+      setPasswordError('Password must contain at least one letter and one digit');
+      return;
     }
+
+    setPasswordError(null);
+    dispatch(loginAction({
+      email: formData.email,
+      password: formData.password
+    }));
+  };
+
+  const handleRandomCityClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    dispatch(changeCity(randomCity));
+    navigate(AppRoute.Root);
   };
 
   return (
@@ -57,24 +90,29 @@ function LoginPage(): JSX.Element {
               <div className="login__input-wrapper form__input-wrapper">
                 <label className="visually-hidden">E-mail</label>
                 <input
-                  ref={emailRef}
                   className="login__input form__input"
                   type="email"
                   name="email"
                   placeholder="Email"
                   required
+                  value={formData.email}
+                  onChange={handleInputChange}
                 />
               </div>
               <div className="login__input-wrapper form__input-wrapper">
                 <label className="visually-hidden">Password</label>
                 <input
-                  ref={passwordRef}
                   className="login__input form__input"
                   type="password"
                   name="password"
                   placeholder="Password"
                   required
+                  value={formData.password}
+                  onChange={handleInputChange}
                 />
+                {passwordError && (
+                  <p className="login__error-message">{passwordError}</p>
+                )}
               </div>
               <button className="login__submit form__submit button" type="submit">
                 Sign in
@@ -84,10 +122,10 @@ function LoginPage(): JSX.Element {
           <section className="locations locations--login locations--current">
             <div className="locations__item">
               <button
-                onClick={() => navigate(AppRoute.Root)}
                 className="locations__item-link"
+                onClick={handleRandomCityClick}
               >
-                <span>Amsterdam</span>
+                <span>{randomCity}</span>
               </button>
             </div>
           </section>

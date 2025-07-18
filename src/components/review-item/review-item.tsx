@@ -5,6 +5,13 @@ type ReviewItemProps = {
 };
 
 function ReviewItem({ review }: ReviewItemProps): JSX.Element {
+  const formattedDate = new Date(review.date).toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric'
+  });
+
+  const ratingPercent = `${Math.round(review.rating) * 20}%`;
+
   return (
     <li className="reviews__item">
       <div className="reviews__user user">
@@ -24,7 +31,7 @@ function ReviewItem({ review }: ReviewItemProps): JSX.Element {
       <div className="reviews__info">
         <div className="reviews__rating rating">
           <div className="reviews__stars rating__stars">
-            <span style={{ width: `${review.rating * 20}%` }} />
+            <span style={{ width: ratingPercent }} />
             <span className="visually-hidden">Rating</span>
           </div>
         </div>
@@ -35,10 +42,7 @@ function ReviewItem({ review }: ReviewItemProps): JSX.Element {
           className="reviews__time"
           dateTime={review.date}
         >
-          {new Date(review.date).toLocaleDateString('en-US', {
-            month: 'long',
-            year: 'numeric'
-          })}
+          {formattedDate}
         </time>
       </div>
     </li>
