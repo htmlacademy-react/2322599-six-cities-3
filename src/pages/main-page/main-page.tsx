@@ -1,11 +1,11 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Map } from '../../components/map/map';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import OfferList from '../../components/offer-list/offer-list';
 import { CitiesList } from '../../components/cities-list/cities-list';
 import { SortingOptions } from '../../components/sorting-options/sorting-options';
-import { getCurrentCityName, getCurrentCityOffers, getOffersError } from '../../store/data-process/selectors';
+import { getCurrentCityName, getOffersError, getCurrentCityOffers } from '../../store/data-process/selectors';
 import { changeCity, resetOffersError } from '../../store/data-process/data-process';
 import { CityName, CITIES, DEFAULT_CITY } from '../../const';
 import type { SortOption } from '../../components/sorting-options/sorting-options';
@@ -61,33 +61,33 @@ function MainPage(): JSX.Element {
     }
   }, [currentCityOffers, currentSort]);
 
-  const handleCityChange = useCallback((city: CityName) => {
+  const handleCityChange = (city: CityName) => {
     setActiveOfferId(null);
     dispatch(changeCity(city));
     setIsSortMenuOpen(false);
-  }, [dispatch]);
+  };
 
-  const handleCardMouseEnter = useCallback((id: string) => {
+  const handleCardMouseEnter = (id: string) => {
     setActiveOfferId(id);
-  }, []);
+  };
 
-  const handleCardMouseLeave = useCallback(() => {
+  const handleCardMouseLeave = () => {
     setActiveOfferId(null);
-  }, []);
+  };
 
-  const handleSortChange = useCallback((option: SortOption) => {
+  const handleSortChange = (option: SortOption) => {
     setCurrentSort(option);
     setIsSortMenuOpen(false);
-  }, []);
+  };
 
-  const toggleSortMenu = useCallback(() => {
+  const toggleSortMenu = () => {
     setIsSortMenuOpen(!isSortMenuOpen);
-  }, [isSortMenuOpen]);
+  };
 
-  const handleRetryClick = useCallback(() => {
+  const handleRetryClick = () => {
     dispatch(resetOffersError());
     dispatch(fetchOffers());
-  }, [dispatch]);
+  };
 
   const currentCity = currentCityOffers.length > 0
     ? currentCityOffers[0].city

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import OfferList from '../../components/offer-list/offer-list';
@@ -27,27 +27,31 @@ function FavoritesPage(): JSX.Element {
       });
   }, [dispatch]);
 
-  const handleRetryClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    dispatch(fetchFavoriteOffers());
-  };
+  const offersByCity = useMemo(() =>
+    favoriteOffers.reduce<Record<string, typeof favoriteOffers>>((acc, offer) => {
+      const cityName = offer.city.name;
+      if (!acc[cityName]) {
+        acc[cityName] = [];
+      }
+      acc[cityName].push(offer);
+      return acc;
+    }, {}), [favoriteOffers]
+  );
 
-  const offersByCity = favoriteOffers.reduce<Record<string, typeof favoriteOffers>>((acc, offer) => {
-    const cityName = offer.city.name;
-    if (!acc[cityName]) {
-      acc[cityName] = [];
-    }
-    acc[cityName].push(offer);
-    return acc;
-  }, {});
-
-  const sortedCities = CITIES.filter((city) => offersByCity[city]?.length > 0);
+  const sortedCities = useMemo(() =>
+    CITIES.filter((city) => offersByCity[city]?.length > 0), [offersByCity]
+  );
 
   if (isLoading) {
     return <Spinner />;
   }
 
   if (error) {
+    const handleRetryClick = (e: React.MouseEvent) => {
+      e.preventDefault();
+      dispatch(fetchFavoriteOffers());
+    };
+
     return (
       <div className="page page--favorites">
         <main className="page__main page__main--favorites">
