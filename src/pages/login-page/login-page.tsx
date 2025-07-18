@@ -29,11 +29,9 @@ function LoginPage(): JSX.Element {
     }
   }, [authorizationStatus, navigate]);
 
-  const validatePassword = (password: string): boolean => {
-    const hasLetter = /[a-zA-Z]/.test(password);
-    const hasDigit = /\d/.test(password);
-    return hasLetter && hasDigit;
-  };
+  const validatePassword = (password: string): boolean => (
+    /[a-zA-Z]/.test(password) && /\d/.test(password)
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Link, generatePath, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { changeFavoriteStatus } from '../../store/api-actions';
@@ -39,6 +39,7 @@ function OfferCardComponent({
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  const [isFavorite, setIsFavorite] = useState(offer.isFavorite);
 
   const {
     id,
@@ -46,7 +47,6 @@ function OfferCardComponent({
     type,
     price,
     isPremium,
-    isFavorite,
     rating,
     previewImage,
   } = offer;
@@ -66,6 +66,9 @@ function OfferCardComponent({
       return;
     }
 
+    const originalIsFavorite = isFavorite;
+    setIsFavorite(!isFavorite);
+
     dispatch(changeFavoriteStatus({
       offerId: id,
       status: !isFavorite
@@ -73,6 +76,7 @@ function OfferCardComponent({
       .unwrap()
       .catch(() => {
         toast.error('Failed to update favorite status');
+        setIsFavorite(originalIsFavorite);
       });
   }, [dispatch, id, isFavorite, authorizationStatus, navigate]);
 

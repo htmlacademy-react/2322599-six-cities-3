@@ -1,4 +1,4 @@
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-toastify';
 import Logo from '../logo/logo';
@@ -14,7 +14,6 @@ type LayoutProps = {
 
 function Layout({ pageType }: LayoutProps): JSX.Element {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const userData = useAppSelector(getUserData);
   const favoriteOffers = useAppSelector(getFavoriteOffers);
@@ -24,7 +23,6 @@ function Layout({ pageType }: LayoutProps): JSX.Element {
     dispatch(logoutAction())
       .unwrap()
       .then(() => {
-        navigate(AppRoute.Login);
         toast.info('Logged out successfully');
       })
       .catch(() => {

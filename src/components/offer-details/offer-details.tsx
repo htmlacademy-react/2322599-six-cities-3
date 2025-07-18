@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Offer } from '../../types/offers';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { changeFavoriteStatus } from '../../store/api-actions';
@@ -13,6 +14,7 @@ function OfferDetails({ offer }: OfferDetailsProps): JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  const [isFavorite, setIsFavorite] = useState(offer.isFavorite);
 
   const ratingWidth = `${Math.round(offer.rating) * 20}%`;
 
@@ -26,10 +28,17 @@ function OfferDetails({ offer }: OfferDetailsProps): JSX.Element {
       return;
     }
 
+    const originalIsFavorite = isFavorite;
+    setIsFavorite(!isFavorite);
+
     dispatch(changeFavoriteStatus({
       offerId: offer.id,
-      status: !offer.isFavorite
-    }));
+      status: !isFavorite
+    }))
+      .unwrap()
+      .catch(() => {
+        setIsFavorite(originalIsFavorite);
+      });
   };
 
   return (
@@ -54,7 +63,7 @@ function OfferDetails({ offer }: OfferDetailsProps): JSX.Element {
           <div className="offer__name-wrapper">
             <h1 className="offer__name">{offer.title}</h1>
             <button
-              className={`offer__bookmark-button button ${offer.isFavorite ? 'offer__bookmark-button--active' : ''}`}
+              className={`offer__bookmark-button button ${isFavorite ? 'offer__bookmark-button--active' : ''}`}
               type="button"
               onClick={handleFavoriteClick}
             >
