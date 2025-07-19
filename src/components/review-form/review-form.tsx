@@ -29,7 +29,7 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
     setError(null);
   };
 
-  const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
     if (formData.rating === '0') {
@@ -77,7 +77,7 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
   const isValid = isReviewValid && isRatingValid;
 
   return (
-    <form className="reviews__form form" action="#" method="post" onSubmit={handleSubmit}>
+    <form className="reviews__form form" action="#" method="post" onSubmit={handleFormSubmit}>
       <label className="reviews__label form__label" htmlFor="review">
         Your review
         {error && <span className="reviews__error-message"> — {error}</span>}
