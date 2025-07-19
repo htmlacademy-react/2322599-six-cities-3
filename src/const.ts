@@ -36,3 +36,8 @@ export const CITIES = [
 ] as const;
 
 export type CityName = typeof CITIES[number];
+
+export enum CommentLength {
+  Min = 50,
+  Max = 300,
+}
