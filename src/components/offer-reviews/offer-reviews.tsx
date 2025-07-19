@@ -2,6 +2,7 @@ import { Review } from '../../types/reviews';
 import ReviewsList from '../reviews-list/reviews-list';
 import ReviewForm from '../review-form/review-form';
 import { useMemo } from 'react';
+import { MAX_REVIEWS_COUNT } from '../../const';
 
 type OfferReviewsProps = {
   reviews: Review[];
@@ -14,7 +15,7 @@ function OfferReviews({ reviews, isCommentsLoading, isAuth, onReviewSubmit }: Of
   const sortedAndLimitedReviews = useMemo(() =>
     [...reviews]
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 10), [reviews]);
+      .slice(0, MAX_REVIEWS_COUNT), [reviews]);
 
   return (
     <section className="offer__reviews reviews">

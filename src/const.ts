@@ -41,3 +41,5 @@ export enum CommentLength {
   Min = 50,
   Max = 300,
 }
+
+export const MAX_REVIEWS_COUNT = 10;
