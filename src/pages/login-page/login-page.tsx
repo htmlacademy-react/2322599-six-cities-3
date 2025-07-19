@@ -4,9 +4,9 @@ import { Helmet } from 'react-helmet-async';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { loginAction } from '../../store/api-actions';
 import { AppRoute, AuthorizationStatus, CITIES, DEFAULT_CITY } from '../../const';
-import { getAuthorizationStatus } from '../../store/user-process/selectors';
 import Logo from '../../components/logo/logo';
 import { changeCity } from '../../store/data-process/data-process';
+import { getAuthorizationStatus } from '../../store/user-process/selectors';
 
 function LoginPage(): JSX.Element {
   const [formData, setFormData] = useState({
@@ -21,14 +21,29 @@ function LoginPage(): JSX.Element {
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
 
   useEffect(() => {
+    let isMounted = true;
+
     const randomIndex = Math.floor(Math.random() * CITIES.length);
-    setRandomCity(CITIES[randomIndex]);
+
+    if (isMounted) {
+      setRandomCity(CITIES[randomIndex]);
+    }
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {
-    if (authorizationStatus === AuthorizationStatus.Auth) {
+    let isMounted = true;
+
+    if (isMounted && authorizationStatus === AuthorizationStatus.Auth) {
       navigate(AppRoute.Root);
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [authorizationStatus, navigate]);
 
   const validatePassword = (password: string): boolean => (

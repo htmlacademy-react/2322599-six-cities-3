@@ -1,8 +1,7 @@
 import { useState, FormEvent, ChangeEvent, Fragment } from 'react';
 import { toast } from 'react-toastify';
+import { CommentLength } from '../../const';
 
-const MIN_COMMENT_LENGTH = 50;
-const MAX_COMMENT_LENGTH = 300;
 const RATING_VALUES = [5, 4, 3, 2, 1];
 
 type ReviewFormProps = {
@@ -17,6 +16,9 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const minCommentLength = Number(CommentLength.Min);
+  const maxCommentLength = Number(CommentLength.Max);
+
   const handleRatingChange = (evt: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, rating: evt.target.value });
     setError(null);
@@ -27,7 +29,7 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
     setError(null);
   };
 
-  const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
     if (formData.rating === '0') {
@@ -36,11 +38,11 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
     }
 
     const isReviewValid =
-      formData.review.length >= MIN_COMMENT_LENGTH &&
-      formData.review.length <= MAX_COMMENT_LENGTH;
+      formData.review.length >= minCommentLength &&
+      formData.review.length <= maxCommentLength;
 
     if (!isReviewValid) {
-      setError(`Comment must be between ${MIN_COMMENT_LENGTH} and ${MAX_COMMENT_LENGTH} characters`);
+      setError(`Comment must be between ${minCommentLength} and ${maxCommentLength} characters`);
       return;
     }
 
@@ -67,15 +69,15 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
   };
 
   const isReviewValid =
-    formData.review.length >= MIN_COMMENT_LENGTH &&
-    formData.review.length <= MAX_COMMENT_LENGTH;
+    formData.review.length >= minCommentLength &&
+    formData.review.length <= maxCommentLength;
 
   const isRatingValid = formData.rating !== '0';
 
   const isValid = isReviewValid && isRatingValid;
 
   return (
-    <form className="reviews__form form" action="#" method="post" onSubmit={handleSubmit}>
+    <form className="reviews__form form" action="#" method="post" onSubmit={handleFormSubmit}>
       <label className="reviews__label form__label" htmlFor="review">
         Your review
         {error && <span className="reviews__error-message"> — {error}</span>}
@@ -121,7 +123,7 @@ function ReviewForm({ onSubmit }: ReviewFormProps): JSX.Element {
         <p className="reviews__help">
           To submit review please make sure to set{' '}
           <span className="reviews__star">rating</span> and describe your stay with at least{' '}
-          <b className="reviews__text-amount">{MIN_COMMENT_LENGTH} characters</b>.
+          <b className="reviews__text-amount">{minCommentLength} characters</b>.
         </p>
         <button
           className="reviews__submit form__submit button"
